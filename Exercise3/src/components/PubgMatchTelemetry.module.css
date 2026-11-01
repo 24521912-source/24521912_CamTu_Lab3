@@ -1,0 +1,187 @@
+
+.container {
+  width: min(100% - 32px, 900px);
+  margin: 0 auto;
+  padding: 40px 0;
+  color: #eaf4ff;
+  font-family: system-ui, sans-serif;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  line-height: 1.2;
+}
+
+.eyebrow {
+  color: #5ec9ff;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.squadNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 32px;
+}
+
+.squadButton,
+.retryButton {
+  padding: 12px 18px;
+  border: 1px solid #477895;
+  border-radius: 8px;
+  background: #152b40;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.squadButton[aria-pressed="true"] {
+  background: #006fa5;
+  border-color: #76d6ff;
+}
+
+.squadButton:hover,
+.retryButton:hover {
+  background: #245676;
+}
+
+.squadButton:focus-visible,
+.retryButton:focus-visible {
+  outline: 3px solid #ffd166;
+  outline-offset: 3px;
+}
+
+.panel {
+  margin-top: 24px;
+}
+
+.skeleton,
+.telemetryCard,
+.errorCard {
+  box-sizing: border-box;
+  min-height: 220px;
+  padding: 24px;
+  border: 1px solid #305d78;
+  border-radius: 12px;
+  background: #102337;
+}
+
+.skeleton {
+  height: 220px;
+  overflow: hidden;
+  background: linear-gradient(120deg, #102337, #173c58);
+}
+
+.skeletonTitle,
+.skeletonLine,
+.skeletonShort {
+  display: block;
+  height: 16px;
+  margin-bottom: 18px;
+  border-radius: 5px;
+  background: #315b78;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonTitle {
+  width: 55%;
+  height: 24px;
+}
+
+.skeletonLine {
+  width: 90%;
+}
+
+.skeletonShort {
+  width: 45%;
+}
+
+.loadingText {
+  font-size: 0.875rem;
+  color: #d5eeff;
+}
+
+.telemetryCard h3,
+.errorCard h3 {
+  margin-top: 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.stats dt {
+  color: #a4c5d9;
+}
+
+.stats dd {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.errorCard {
+  border-color: #e58b8b;
+}
+
+.retryButton {
+  margin-top: 16px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonTitle,
+  .skeletonLine,
+  .skeletonShort {
+    animation: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: calc(100% - 24px);
+    padding: 20px 0;
+  }
+
+  .squadNav {
+    flex-direction: column;
+  }
+
+  .squadButton {
+    width: 100%;
+  }
+
+  .skeleton,
+  .telemetryCard,
+  .errorCard {
+    padding: 16px;
+  }
+}
