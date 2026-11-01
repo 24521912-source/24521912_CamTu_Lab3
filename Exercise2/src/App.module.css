@@ -1,0 +1,216 @@
+
+.container {
+  width: min(100% - 32px, 1000px);
+  margin: 0 auto;
+  padding: 40px 0 64px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.header h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 12px 0 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.directory {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 8px 32px rgb(15 23 42 / 5%);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.4rem;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field label {
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.field input::placeholder {
+  color: #64748b;
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.resetButton:focus-visible,
+.deleteButton:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+.resultsHeader {
+  margin: 28px 0 16px;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.peopleList {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.personCard {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.personInfo {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.personInfo h3 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 1.05rem;
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.resetButton,
+.deleteButton {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.resetButton {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.resetButton:hover {
+  background: #dbeafe;
+}
+
+.deleteButton {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.deleteButton:hover {
+  background: #fee2e2;
+}
+
+.emptyState {
+  padding: 28px 16px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #475569;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-top: 56px;
+  }
+
+  .directory {
+    padding: 28px;
+  }
+
+  .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .personCard {
+    align-items: center;
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 900px) {
+  .filters {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resetButton,
+  .deleteButton {
+    transition: none;
+  }
+}
