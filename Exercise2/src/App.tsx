@@ -13,6 +13,7 @@ function App() {
   const iqId = useId();
   const sortId = useId();
 
+  // Chỉ tính danh sách khi render, không tạo state dư thừa.
   const visiblePeople = people
     .filter((person) => {
       const matchesName = person.name
@@ -32,7 +33,6 @@ function App() {
     setPeople((prev) => prev.filter((person) => person.id !== id));
   };
 
-  // Khôi phục danh sách gốc bằng một mảng mới.
   const handleReset = () => {
     setPeople([...SMART_PEOPLE]);
   };
@@ -86,22 +86,30 @@ function App() {
           Reset
         </button>
 
-        <ul>
-          {visiblePeople.map((person) => (
-            <li key={person.id}>
-              <h3>{person.name}</h3>
-              <p>Age: {person.age}</p>
-              <p>IQ: {person.iq}</p>
-              <button
-                type="button"
-                onClick={() => handleDelete(person.id)}
-                aria-label={`Delete ${person.name}`}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+        <output role="status" aria-live="polite">
+          Showing {visiblePeople.length} of {people.length} scientists
+        </output>
+
+        {visiblePeople.length === 0 ? (
+          <p>No scientists match your current filters.</p>
+        ) : (
+          <ul>
+            {visiblePeople.map((person) => (
+              <li key={person.id}>
+                <h3>{person.name}</h3>
+                <p>Age: {person.age}</p>
+                <p>IQ: {person.iq}</p>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(person.id)}
+                  aria-label={`Delete ${person.name}`}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );
