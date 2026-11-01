@@ -1,26 +1,37 @@
 
 import { useId, useState } from 'react';
 import { SMART_PEOPLE } from './data/smartPeople';
-import type { Scientist } from './types/scientist';
+import type { Scientist, SortOption } from './types/scientist';
 
 function App() {
-  const [people] = useState<Scientist[]>(() => [...SMART_PEOPLE]);
+  const [people, setPeople] = useState<Scientist[]>(() => [...SMART_PEOPLE]);
   const [searchQuery, setSearchQuery] = useState('');
   const [minimumIQ, setMinimumIQ] = useState<number>(0);
+  const [sortBy, setSortBy] = useState<SortOption>('iq');
 
   const searchId = useId();
   const iqId = useId();
+  const sortId = useId();
 
-  // Kết hợp tìm kiếm tên và lọc IQ.
-  const visiblePeople = people.filter((person) => {
-    const matchesName = person.name
-      .toLowerCase()
-      .includes(searchQuery.trim().toLowerCase());
+  const visiblePeople = people
+    .filter((person) => {
+      const matchesName = person.name
+        .toLowerCase()
+        .includes(searchQuery.trim().toLowerCase());
 
-    const matchesIQ = person.iq >= minimumIQ;
+      return matchesName && person.iq >= minimumIQ;
+    })
+    .toSorted((a, b) => {
+      const difference =
+        sortBy === 'iq' ? b.iq - a.iq : b.age - a.age;
 
-    return matchesName && matchesIQ;
-  });
+      return difference !== 0 ? difference : a.id.localeCompare(b.id);
+    });
+
+  // Xóa theo stable ID, không thay đổi mảng state cũ.
+  const handleDelete = (id: string) => {
+    setPeople((prev) => prev.filter((person) => person.id !== id));
+  };
 
   return (
     <main>
@@ -50,12 +61,22 @@ function App() {
           value={minimumIQ === 0 ? '' : minimumIQ}
           onChange={(event) => {
             const value = event.currentTarget.valueAsNumber;
-
-            // Input trống hoặc không hợp lệ sẽ trở về 0.
             setMinimumIQ(Number.isNaN(value) ? 0 : value);
           }}
           placeholder="Enter minimum IQ"
         />
+
+        <label htmlFor={sortId}>Sort by</label>
+        <select
+          id={sortId}
+          value={sortBy}
+          onChange={(event) =>
+            setSortBy(event.target.value as SortOption)
+          }
+        >
+          <option value="iq">IQ (High to Low)</option>
+          <option value="age">Age (Oldest to Youngest)</option>
+        </select>
 
         <ul>
           {visiblePeople.map((person) => (
@@ -63,6 +84,13 @@ function App() {
               <h3>{person.name}</h3>
               <p>Age: {person.age}</p>
               <p>IQ: {person.iq}</p>
+              <button
+                type="button"
+                onClick={() => handleDelete(person.id)}
+                aria-label={`Delete ${person.name}`}
+              >
+                Delete
+              </button>
             </li>
           ))}
         </ul>
