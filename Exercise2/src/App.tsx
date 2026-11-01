@@ -28,9 +28,13 @@ function App() {
       return difference !== 0 ? difference : a.id.localeCompare(b.id);
     });
 
-  // Xóa theo stable ID, không thay đổi mảng state cũ.
   const handleDelete = (id: string) => {
     setPeople((prev) => prev.filter((person) => person.id !== id));
+  };
+
+  // Khôi phục danh sách gốc bằng một mảng mới.
+  const handleReset = () => {
+    setPeople([...SMART_PEOPLE]);
   };
 
   return (
@@ -77,6 +81,10 @@ function App() {
           <option value="iq">IQ (High to Low)</option>
           <option value="age">Age (Oldest to Youngest)</option>
         </select>
+
+        <button type="button" onClick={handleReset}>
+          Reset
+        </button>
 
         <ul>
           {visiblePeople.map((person) => (
