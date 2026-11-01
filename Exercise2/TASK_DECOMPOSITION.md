@@ -201,6 +201,48 @@ Reset:
 - Layout supports narrow screens without horizontal overflow.
 
 ---
+### 4.8 TypeScript and Component Contracts
+
+- `Scientist` includes:
+  - `id: string`
+  - `name: string`
+  - `age: number`
+  - `iq: number`
+- `SortOption` is a union type: `'iq' | 'age'`.
+- `ScientistDirectory` owns the directory state.
+- Component props are introduced only when components are actually separated.
+- Do not create unnecessary abstractions or custom hooks.
+
+### 4.9 Initial Dataset
+
+Use exactly six records from the Lab 03 slides:
+
+| ID | Name | Age | IQ |
+|---|---|---:|---:|
+| sp-1 | Johann Goethe | 82 | 210 |
+| sp-2 | Albert Einstein | 76 | 205 |
+| sp-3 | Leonardo da Vinci | 67 | 180 |
+| sp-4 | Isaac Newton | 84 | 190 |
+| sp-5 | James Maxwell | 48 | 190 |
+| sp-6 | William Sidis | 46 | 200 |
+
+These IQ values are illustrative exercise data.
+
+### 4.10 State and Behavior Invariants
+
+- `people` stores the current scientist records.
+- `searchQuery` stores the controlled search input.
+- `minimumIQ` is a number; empty or invalid numeric input falls back to `0`.
+- `sortBy` stores a `SortOption`, initially `'iq'`.
+- `visiblePeople` is calculated using filtering and `.toSorted()` during rendering.
+- Never store `visiblePeople` as a separate state.
+- Never use `useEffect` to synchronize search, filtering, or sorting.
+- Do not introduce `useMemo` without profiling evidence.
+- Sorting is descending; equal values use stable ID ordering.
+- Delete uses functional updates and stable IDs.
+- Reset restores the six original records without clearing filter or sort controls.
+- Use `createRoot` and `StrictMode`.
+- Profiling must account for development-mode StrictMode behavior.
 
 ## 5. Task Decomposition
 
