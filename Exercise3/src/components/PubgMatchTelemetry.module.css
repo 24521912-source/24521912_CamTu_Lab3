@@ -185,3 +185,65 @@
     padding: 16px;
   }
 }
+
+/* C02 — Responsive & Accessibility */
+
+.container {
+  min-width: 0;
+}
+
+.container,
+.container * {
+  overflow-wrap: break-word;
+}
+
+.header h1 {
+  overflow-wrap: anywhere;
+}
+
+.squadButton,
+.retryButton {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.squadButton:focus-visible,
+.retryButton:focus-visible {
+  outline: 3px solid #ffd166;
+  outline-offset: 3px;
+}
+
+.telemetryCard,
+.errorCard,
+.skeleton {
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-top: 56px;
+  }
+
+  .squadNav {
+    flex-direction: row;
+  }
+
+  .squadButton {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .stats dd {
+    margin-bottom: 12px;
+  }
+
+  .retryButton {
+    width: 100%;
+  }
+}
