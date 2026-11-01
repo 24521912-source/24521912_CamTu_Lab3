@@ -1,5 +1,5 @@
 
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { SMART_PEOPLE } from './data/smartPeople';
 import type { Scientist, SortOption } from './types/scientist';
 import styles from './App.module.css';
@@ -14,6 +14,9 @@ function App() {
   const iqId = useId();
   const sortId = useId();
 
+  const resetButtonRef = useRef<HTMLButtonElement>(null);
+  const deleteButtonRefs = useRef(new Map<string, HTMLButtonElement>());
+
   const visiblePeople = people
     .filter((person) => {
       const matchesName = person.name
@@ -23,15 +26,30 @@ function App() {
       return matchesName && person.iq >= minimumIQ;
     })
     .toSorted((a, b) => {
-      const difference = sortBy === 'iq'
-        ? b.iq - a.iq
-        : b.age - a.age;
+      const difference =
+        sortBy === 'iq' ? b.iq - a.iq : b.age - a.age;
 
       return difference !== 0 ? difference : a.id.localeCompare(b.id);
     });
 
+  // Giữ vị trí focus hợp lý khi xóa một người bằng bàn phím.
   const handleDelete = (id: string) => {
+    const currentIndex = visiblePeople.findIndex((person) => person.id === id);
+
+    const nextId =
+      visiblePeople[currentIndex + 1]?.id ??
+      visiblePeople[currentIndex - 1]?.id;
+
     setPeople((prev) => prev.filter((person) => person.id !== id));
+
+    // Focus sau khi React hoàn tất việc cập nhật DOM.
+    requestAnimationFrame(() => {
+      if (nextId) {
+        deleteButtonRefs.current.get(nextId)?.focus();
+      } else {
+        resetButtonRef.current?.focus();
+      }
+    });
   };
 
   const handleReset = () => {
@@ -55,6 +73,7 @@ function App() {
         <div className={styles.sectionHeader}>
           <h2 id="scientists-heading">Scientists</h2>
           <button
+            ref={resetButtonRef}
             type="button"
             className={styles.resetButton}
             onClick={handleReset}
@@ -129,6 +148,13 @@ function App() {
                 </div>
 
                 <button
+                  ref={(element) => {
+                    if (element) {
+                      deleteButtonRefs.current.set(person.id, element);
+                    } else {
+                      deleteButtonRefs.current.delete(person.id);
+                    }
+                  }}
                   type="button"
                   className={styles.deleteButton}
                   onClick={() => handleDelete(person.id)}
