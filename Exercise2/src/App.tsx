@@ -6,13 +6,21 @@ import type { Scientist } from './types/scientist';
 function App() {
   const [people] = useState<Scientist[]>(() => [...SMART_PEOPLE]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [minimumIQ, setMinimumIQ] = useState<number>(0);
 
   const searchId = useId();
+  const iqId = useId();
 
-  // Danh sách hiển thị được tính trực tiếp từ state.
-  const visiblePeople = people.filter((person) =>
-    person.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
-  );
+  // Kết hợp tìm kiếm tên và lọc IQ.
+  const visiblePeople = people.filter((person) => {
+    const matchesName = person.name
+      .toLowerCase()
+      .includes(searchQuery.trim().toLowerCase());
+
+    const matchesIQ = person.iq >= minimumIQ;
+
+    return matchesName && matchesIQ;
+  });
 
   return (
     <main>
@@ -31,6 +39,22 @@ function App() {
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
           placeholder="Enter scientist name"
+        />
+
+        <label htmlFor={iqId}>Minimum IQ</label>
+        <input
+          id={iqId}
+          type="number"
+          min="0"
+          step="1"
+          value={minimumIQ === 0 ? '' : minimumIQ}
+          onChange={(event) => {
+            const value = event.currentTarget.valueAsNumber;
+
+            // Input trống hoặc không hợp lệ sẽ trở về 0.
+            setMinimumIQ(Number.isNaN(value) ? 0 : value);
+          }}
+          placeholder="Enter minimum IQ"
         />
 
         <ul>
