@@ -2,6 +2,7 @@
 import { Fragment, useState } from "react";
 import type { DeveloperCardProps } from "../types/profile";
 import SkillBadge from "./SkillBadge";
+import styles from "./DeveloperCard.module.css";
 
 /**
  * Tạo chữ viết tắt từ tên.
@@ -21,8 +22,8 @@ function getInitials(name: string): string {
 }
 
 /**
- * Thẻ hồ sơ lập trình viên / game thủ.
- * Sử dụng semantic HTML, không dùng thẻ div.
+ * Thẻ hồ sơ sử dụng semantic HTML.
+ * Không dùng thẻ div trong component.
  */
 export default function DeveloperCard({
   name,
@@ -31,13 +32,11 @@ export default function DeveloperCard({
   stats,
   skills,
 }: DeveloperCardProps) {
-  // Lưu URL của ảnh bị lỗi để hiển thị initials thay thế.
   const [failedAvatarUrl, setFailedAvatarUrl] = useState<
     string | null
   >(null);
 
-  const hasValidAvatarUrl =
-    avatarUrl.startsWith("https://");
+  const hasValidAvatarUrl = avatarUrl.startsWith("https://");
 
   const showAvatar =
     hasValidAvatarUrl && failedAvatarUrl !== avatarUrl;
@@ -45,11 +44,15 @@ export default function DeveloperCard({
   const headingId = "developer-profile-heading";
 
   return (
-    <article aria-labelledby={headingId}>
-      <header>
-        <figure>
+    <article
+      className={styles.card}
+      aria-labelledby={headingId}
+    >
+      <header className={styles.profileHeader}>
+        <figure className={styles.avatarFigure}>
           {showAvatar ? (
             <img
+              className={styles.avatar}
               src={avatarUrl}
               alt={`Avatar của ${name}`}
               width={120}
@@ -58,6 +61,7 @@ export default function DeveloperCard({
             />
           ) : (
             <span
+              className={styles.avatarFallback}
               role="img"
               aria-label={`Avatar thay thế của ${name}`}
             >
@@ -66,29 +70,41 @@ export default function DeveloperCard({
           )}
         </figure>
 
-        <hgroup>
-          <h2 id={headingId}>{name}</h2>
-          <p>{role}</p>
+        <hgroup className={styles.profileInfo}>
+          <h2 className={styles.name} id={headingId}>
+            {name}
+          </h2>
+          <p className={styles.role}>{role}</p>
         </hgroup>
       </header>
 
-      <section aria-label="Profile statistics">
-        <h3>Statistics</h3>
+      <section
+        className={styles.section}
+        aria-label="Profile statistics"
+      >
+        <h3 className={styles.sectionTitle}>Statistics</h3>
 
-        <dl>
+        <dl className={styles.statsList}>
           {Object.entries(stats).map(([label, value]) => (
             <Fragment key={label}>
-              <dt>{label}</dt>
-              <dd>{value}</dd>
+              <dt className={styles.statTerm}>
+                {label}
+              </dt>
+              <dd className={styles.statValue}>
+                {value}
+              </dd>
             </Fragment>
           ))}
         </dl>
       </section>
 
-      <section aria-label="Professional skills">
-        <h3>Skills</h3>
+      <section
+        className={styles.section}
+        aria-label="Professional skills"
+      >
+        <h3 className={styles.sectionTitle}>Skills</h3>
 
-        <ul>
+        <ul className={styles.skillsList}>
           {skills.map((skill) => (
             <SkillBadge key={skill.id} skill={skill} />
           ))}

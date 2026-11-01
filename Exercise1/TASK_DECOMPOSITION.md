@@ -609,5 +609,3 @@ Exercise 1 is complete only when:
 7. Both instructor-required commits are present.
 8. Student can explain and modify the code.
 
-Do not begin Exercise 2 or Exercise 3 as part
-of this project.

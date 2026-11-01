@@ -1,15 +1,19 @@
 
 import type { SkillBadgeProps } from "../types/profile";
+import styles from "./SkillBadge.module.css";
 
 /**
- * Hiển thị tên và cấp độ của một kỹ năng.
- * Component chỉ nhận props và render, không thay đổi dữ liệu.
+ * Hiển thị một kỹ năng và cấp độ tương ứng.
  */
 export default function SkillBadge({ skill }: SkillBadgeProps) {
   return (
-    <li>
-      <span>{skill.name}</span>{" "}
-      <span>({skill.level})</span>
+    <li className={styles.badge}>
+      <span className={styles.skillName}>
+        {skill.name}
+      </span>
+      <span className={styles.skillLevel}>
+        ({skill.level})
+      </span>
     </li>
   );
 }

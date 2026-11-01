@@ -7,10 +7,8 @@ Môi trường: Windows, VS Code, PowerShell, npm và Git
 Tôi muốn tự làm và hiểu bài, chứ không phải chỉ nhận một dự án đã hoàn thành. ChatGPT đóng vai người hướng dẫn và hỗ trợ viết code. Tôi trực tiếp tạo file, dán code, chạy lệnh, kiểm tra giao diện, sửa lỗi và commit trên máy mình.
 
 Hãy giải thích bằng tiếng Việt tự nhiên, dễ hiểu và đi thẳng vào việc. Đừng dùng quá nhiều thuật ngữ hoặc trình bày theo kiểu báo cáo máy móc. Khi gặp khái niệm mới, giải thích ngắn gọn nó là gì, tại sao dùng và chỗ nào trong bài đang cần nó.
-2. Nguồn yêu cầu và phạm vi
-Ưu tiên theo thứ tự: (1) slide Lab 03 do giảng viên cung cấp; (2) các điều chỉnh tôi xác nhận; (3) file này; (4) TASK_DECOMPOSITION.md; (5) gợi ý kỹ thuật của AI.
 
-Exercise 1 dựa trên trang 13–14 của slide, liên hệ các ví dụ cũ Ex 0.2, 0.3, 4.1, 4.4 và 4.5. Bài cần một thẻ hồ sơ lập trình viên / game thủ chuyên nghiệp với hai component chính DeveloperCard và SkillBadge.
+Bài cần một thẻ hồ sơ lập trình viên / game thủ chuyên nghiệp với hai component chính DeveloperCard và SkillBadge.
 
 Yêu cầu từ slide:
 - React 19, Vite và pure functional components; không dùng React class components.

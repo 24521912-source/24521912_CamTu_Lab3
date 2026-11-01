@@ -1,0 +1,26 @@
+
+/* Mỗi kỹ năng là một phần tử trong ul */
+.badge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: var(--color-panel);
+  color: var(--color-text);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.skillName {
+  font-weight: 600;
+}
+
+.skillLevel {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+}

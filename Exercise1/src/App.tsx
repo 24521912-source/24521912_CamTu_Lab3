@@ -29,11 +29,11 @@ const developerSkills: Skill[] = [
   },
 ];
 
-// Dữ liệu mẫu truyền vào DeveloperCard qua props.
+// Thông tin hiển thị trên Profile Card.
 const developerProfile: DeveloperCardProps = {
-  name: "Alex Morgan",
-  role: "Frontend Engineer & Pro Gamer",
-  avatarUrl: "https://example.invalid/avatar.png",
+  name: "Nguyễn Thị Cẩm Tú",
+  role: "Data Engineer & Data Scientist",
+  avatarUrl: "https://www.pngkey.com/png/detail/30-302310_minion-despicable-me-minions.png",
   stats: {
     "Projects Completed": 24,
     "Years of Experience": 4,
@@ -45,8 +45,10 @@ const developerProfile: DeveloperCardProps = {
 
 export default function App() {
   return (
-    <main>
-      <h1>Developer & Pro-Gamer Profile</h1>
+    <main className="page">
+      <h1 className="pageTitle">
+        Developer & Pro-Gamer Profile
+      </h1>
 
       <DeveloperCard {...developerProfile} />
     </main>
