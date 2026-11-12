@@ -10,12 +10,14 @@ import styles from './DrumKit.module.css'
 interface DrumPadProps {
   pad: DrumPadConfig
   isShortcutPressed: boolean
+  instructionsId: string
   onHit: (id: DrumPadConfig['id']) => void
 }
 
 export function DrumPad({
   pad,
   isShortcutPressed,
+  instructionsId,
   onHit,
 }: DrumPadProps) {
   const [isLocalPressed, setIsLocalPressed] = useState(false)
@@ -63,7 +65,8 @@ export function DrumPad({
       className={styles.pad}
       data-pressed={isPressed}
       aria-label={`${pad.name}, shortcut ${pad.key}`}
-      aria-pressed={isPressed}
+aria-describedby={instructionsId}
+aria-pressed={isPressed}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}

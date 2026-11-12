@@ -4,10 +4,32 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>homework1</title>
+    <title>Production Studio — Drum Kit</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
+/* T07: Global accessibility refinements */
+
+html {
+  min-width: 0;
+  scroll-behavior: auto;
+}
+
+body {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+button {
+  font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

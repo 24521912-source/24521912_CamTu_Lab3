@@ -33,3 +33,25 @@ button:focus-visible {
   background: #426ca3;
   color: #ffffff;
 }
+
+/* T07: Global accessibility refinements */
+
+html {
+  min-width: 0;
+  scroll-behavior: auto;
+}
+
+body {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+button {
+  font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

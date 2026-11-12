@@ -375,3 +375,166 @@
     transition: none;
   }
 }
+
+/* T07: Focus and accessibility refinements */
+
+.pad {
+  position: relative;
+  overflow-wrap: anywhere;
+}
+
+.pad:focus-visible {
+  outline: 4px solid #ffda78;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 7px #0c1220;
+}
+
+.pad:focus-visible[data-pressed='true'] {
+  outline-color: #ffda78;
+  border-color: #90d9ff;
+}
+
+.pad:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.pad:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.pad:focus-visible .padKey {
+  background: #ffffff;
+  color: #142847;
+}
+
+/* Keep focus indicators clear and avoid clipping */
+
+.padGrid {
+  padding: 8px;
+  margin: -8px;
+}
+
+.instrument,
+.feedbackPanel {
+  min-width: 0;
+}
+
+.historyItem,
+.meterDisplay {
+  min-width: 0;
+}
+
+/* Ensure text remains readable during zoom */
+
+.padName,
+.padDescription,
+.instructions,
+.feedbackHint,
+.meterDisclaimer {
+  overflow-wrap: anywhere;
+}
+
+/* Comfortable pointer targets */
+
+.pad {
+  min-height: 160px;
+}
+
+/* Smaller screens */
+
+@media (max-width: 420px) {
+  .studio {
+    width: calc(100% - 24px);
+  }
+
+  .padGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .pad {
+    min-height: 150px;
+  }
+
+  .feedbackSection {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 340px) {
+  .studio {
+    width: calc(100% - 16px);
+  }
+
+  .instrument,
+  .feedbackPanel {
+    padding: 12px;
+  }
+
+  .padGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .pad {
+    min-height: 110px;
+    padding: 14px;
+  }
+
+  .sectionHeader,
+  .feedbackHeading {
+    flex-wrap: wrap;
+  }
+}
+
+/* Windows high-contrast / forced colors */
+
+@media (forced-colors: active) {
+  .pad {
+    border: 2px solid ButtonText;
+    color: ButtonText;
+    background: ButtonFace;
+  }
+
+  .pad[data-pressed='true'] {
+    border: 3px solid Highlight;
+  }
+
+  .pad:focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 4px;
+    box-shadow: none;
+  }
+
+  .padKey,
+  .historyKey {
+    color: ButtonText;
+    background: ButtonFace;
+    border: 1px solid ButtonText;
+  }
+
+  .meterTrack {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .meterFill {
+    background: Highlight;
+  }
+}
+
+/* Disable decorative transitions when requested */
+
+@media (prefers-reduced-motion: reduce) {
+  .pad,
+  .meterFill {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .pad:active,
+  .pad[data-pressed='true'] {
+    transform: none;
+  }
+}

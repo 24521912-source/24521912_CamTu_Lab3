@@ -179,22 +179,27 @@ export function DrumKit() {
           </span>
         </div>
 
-        <p className={styles.instructions}>
-          Press W, A, S, D, J, K or L to play.
-          You can also click a pad or focus it with Tab,
-          then use Enter or Space.
-        </p>
+        <p
+  id="drum-instructions"
+  className={styles.instructions}
+>
+  Use the physical keys W, A, S, D, J, K or L to play.
+  You can also click a pad, or focus it with Tab
+  and press Enter or Space.
+  Each pad shows its current pressed state.
+</p>
 
         <div className={styles.padGrid}>
           {DRUM_PADS.map((pad) => (
             <DrumPad
-              key={pad.id}
-              pad={pad}
-              isShortcutPressed={
-                pressedCodes.has(pad.code)
-              }
-              onHit={handleHit}
-            />
+  key={pad.id}
+  pad={pad}
+  isShortcutPressed={
+    pressedCodes.has(pad.code)
+  }
+  instructionsId="drum-instructions"
+  onHit={handleHit}
+/>
           ))}
         </div>
       </section>
