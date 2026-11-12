@@ -371,3 +371,28 @@
     transition: none;
   }
 }
+
+.messageInfo {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  background: #f0f9ff;
+  color: #075985;
+  font-weight: 700;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .messageInfo {
+    padding: 12px;
+  }
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  background: #64748b;
+  color: #ffffff;
+  opacity: 0.8;
+}

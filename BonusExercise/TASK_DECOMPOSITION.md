@@ -253,26 +253,108 @@ Suggested Commit:
 feat(bonus): build accessible situationship analyzer UI
 
 
-## T05 — Seen Không Rep Timer
 
-Status: TODO
+## T05 — Seen Không Rep Timer & StrictMode Cleanup
+
+Status: IN PROGRESS
 
 Goal:
-Implement the explicit five-second message timeout and safe cancellation.
+Implement a five-second simulated message reply window
+with reliable cancellation and stale timeout protection.
 
-Prerequisite: T04 DONE
+Prerequisites:
+- T01 DONE
+- T02 DONE
+- T03 DONE
+- T04 DONE
 
-Tests:
-- Send starts timeout
-- Reply cancels timeout
-- Phase change cancels timeout
-- Actor switch cancels timeout
-- Exit cancels timeout
-- Unmount cleanup
-- StrictMode behavior
+Files:
+- src/domain/messageLifecycle.ts (new)
+- src/domain/messageLifecycle.test.ts (new)
+- src/domain/analyzerSession.ts (new)
+- src/domain/analyzerSession.test.ts (new)
+- src/components/SituationshipAnalyzer.tsx (modified)
+- src/components/SituationshipAnalyzer.test.tsx (new)
+- src/components/SituationshipAnalyzer.module.css (modified)
+- package.json (modified by npm)
+- package-lock.json (modified by npm)
+- TASK_DECOMPOSITION.md (modified)
 
-Suggested commit:
-feat(bonus): implement ghosting timer lifecycle
+Input Contract:
+- RelationshipPhase from T02
+- MessageStatus:
+  IDLE | WAITING | REPLIED | CANCELLED | TIMED_OUT
+- SEND, REPLY, CANCEL, TIMEOUT actions
+- Relationship phase events
+- Actor switch to AI_DO
+
+Output Contract:
+- A five-second reply window begins on SEND.
+- A valid reply stops the pending timeout.
+- Timeout transitions the relationship to GHOSTED_EXIT.
+- Cancellation prevents stale timeout transitions.
+
+Implementation Decisions:
+- Messages are local simulations only.
+- Sending is available in DATING_NO_LOVE.
+- EM is the simulated sender.
+- A repeated SEND replaces the previous deadline.
+- Effort changes do not restart the deadline.
+- Switching to AI_DO cancels the pending window.
+- Phase changes and manual exit cancel the window.
+- React useEffect owns timer setup and cleanup.
+- clearTimeout is used for browser timers.
+- No AbortController or fake network API is needed.
+- Message status is separate from relationship phase.
+- Request IDs guard against stale timeout actions.
+
+Acceptance Criteria:
+- No timer starts on component mount.
+- SEND starts a five-second deadline.
+- Reply before deadline prevents ghosting.
+- No reply triggers GHOSTED_EXIT after deadline.
+- Manual cancellation stops the timeout.
+- Phase changes stop the timeout.
+- Switching to AI_DO stops the timeout.
+- Manual exit stops the timeout.
+- Repeated SEND replaces the previous deadline.
+- Effort changes do not restart the timeout.
+- Unmount clears pending timers.
+- StrictMode does not leave duplicate timers.
+- No stale callback changes a cancelled session.
+- Keyboard and status announcements work.
+- Layout remains usable at 375px.
+- Existing T02-T04 behavior remains functional.
+- All tests, build, and lint pass.
+- Git commit succeeds.
+
+Edge Cases:
+- Rapid repeated sends
+- Reply immediately before timeout
+- Timeout with an outdated request ID
+- Timeout before the deadline
+- Phase changes during waiting
+- Actor switching during waiting
+- Unmount during waiting
+- StrictMode effect cleanup
+- Effort edits during waiting
+- Sending outside DATING_NO_LOVE
+
+Verification:
+- npx vitest run src/domain/messageLifecycle.test.ts
+- npx vitest run src/domain/analyzerSession.test.ts
+- npx vitest run src/components/SituationshipAnalyzer.test.tsx
+- npm run test
+- npm run build
+- npm run lint
+- npm run dev
+- Browser Console inspection
+- Manual five-second timer scenarios
+- Keyboard and 375px responsive checks
+- Git diff inspection
+
+Suggested Commit:
+feat(bonus): implement ghosting timer and safe cleanup
 
 ## T06 — Regression and Accessibility
 

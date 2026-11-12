@@ -1,11 +1,15 @@
 
-import { useId, useState, type FormEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useReducer,
+  useState,
+  type FormEvent,
+} from 'react';
 
 import {
-  INITIAL_RELATIONSHIP_PHASE,
   canTransition,
   getAvailableEvents,
-  transitionRelationship,
   type RelationshipEvent,
   type RelationshipPhase,
 } from '../domain/relationshipMachine';
@@ -20,6 +24,16 @@ import {
   type EffortActor,
   type EffortLog,
 } from '../domain/effortModel';
+
+import {
+  INITIAL_ANALYZER_SESSION,
+  analyzerSessionReducer,
+} from '../domain/analyzerSession';
+
+import {
+  MESSAGE_TIMEOUT_MS,
+  type MessageStatus,
+} from '../domain/messageLifecycle';
 
 import styles from './SituationshipAnalyzer.module.css';
 
@@ -44,6 +58,14 @@ const ACTOR_LABELS: Record<EffortActor, string> = {
   AI_DO: 'Ai Đó',
 };
 
+const MESSAGE_LABELS: Record<MessageStatus, string> = {
+  IDLE: 'Chưa gửi tin nhắn.',
+  WAITING: 'Đang chờ phản hồi trong 5 giây.',
+  REPLIED: 'Ai Đó đã phản hồi trong thời hạn.',
+  CANCELLED: 'Đã hủy lượt chờ phản hồi.',
+  TIMED_OUT: 'Seen không rep: đã quá 5 giây.',
+};
+
 function formatScore(value: number): string {
   return new Intl.NumberFormat('vi-VN', {
     maximumFractionDigits: 2,
@@ -51,12 +73,14 @@ function formatScore(value: number): string {
 }
 
 export function SituationshipAnalyzer() {
-  const [phase, setPhase] = useState<RelationshipPhase>(
-    INITIAL_RELATIONSHIP_PHASE,
+  const [session, dispatch] = useReducer(
+    analyzerSessionReducer,
+    INITIAL_ANALYZER_SESSION,
   );
 
-  const [effortLog, setEffortLog] = useState<EffortLog>([]);
+  const { phase, message } = session;
 
+  const [effortLog, setEffortLog] = useState<EffortLog>([]);
   const [actor, setActor] = useState<EffortActor>('EM');
   const [stepsInput, setStepsInput] = useState('1');
   const [formError, setFormError] = useState('');
@@ -68,21 +92,96 @@ export function SituationshipAnalyzer() {
   const stepsId = useId();
   const errorId = useId();
 
-  // Derived values: no redundant score state or useEffect.
   const summary = summarizeEffort(effortLog);
   const availableEvents = getAvailableEvents(phase);
 
-  function handleTransition(event: RelationshipEvent) {
-    if (!canTransition(phase, event)) {
+  const isWaiting = message.status === 'WAITING';
+
+  // One timeout per message request.
+  // StrictMode cleanup clears the previous timer.
+  useEffect(() => {
+    if (
+      message.status !== 'WAITING' ||
+      message.deadline === null
+    ) {
       return;
     }
 
-    const nextPhase = transitionRelationship(phase, event);
-
-    setPhase(nextPhase);
-    setAnnouncement(
-      `Trạng thái đã chuyển sang ${PHASE_LABELS[nextPhase]}.`,
+    const requestId = message.requestId;
+    const remaining = Math.max(
+      0,
+      message.deadline - Date.now(),
     );
+
+    const timeoutId = window.setTimeout(() => {
+      dispatch({
+        type: 'TIMEOUT',
+        requestId,
+        now: Date.now(),
+      });
+    }, remaining);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [message.status, message.requestId, message.deadline]);
+
+  function handleTransition(event: RelationshipEvent) {
+    if (
+      event === 'GHOST_TIMEOUT' ||
+      !canTransition(phase, event)
+    ) {
+      return;
+    }
+
+    dispatch({ type: 'PHASE_EVENT', event });
+    setAnnouncement(
+      `Đã chọn chuyển trạng thái: ${EVENT_LABELS[event]}.`,
+    );
+  }
+
+  function handleSendMessage() {
+  if (phase !== 'DATING_NO_LOVE' || actor !== 'EM') {
+    return;
+  }
+
+    dispatch({ type: 'SEND', now: Date.now() });
+    setAnnouncement(
+      'Đã gửi tin nhắn demo. Bắt đầu chờ 5 giây.',
+    );
+  }
+
+  function handleReply() {
+    if (!isWaiting) {
+      return;
+    }
+
+    dispatch({ type: 'REPLY' });
+    setAnnouncement('Đã mô phỏng phản hồi từ Ai Đó.');
+  }
+
+  function handleCancel() {
+    if (!isWaiting) {
+      return;
+    }
+
+    dispatch({ type: 'CANCEL' });
+    setAnnouncement('Bạn đã dừng chờ phản hồi.');
+  }
+
+  function handleActorChange(nextActor: EffortActor) {
+    setActor(nextActor);
+    setFormError('');
+
+    if (nextActor === 'AI_DO') {
+      dispatch({ type: 'SWITCH_TO_AI_DO' });
+
+      if (isWaiting) {
+        setAnnouncement(
+          'Đã chuyển sang Ai Đó và hủy lượt chờ.',
+        );
+      }
+    }
   }
 
   function handleAddSignal(event: FormEvent<HTMLFormElement>) {
@@ -97,7 +196,7 @@ export function SituationshipAnalyzer() {
       steps <= 0
     ) {
       setFormError('Số bước phải là số nguyên dương hợp lệ.');
-      setAnnouncement('Không thể thêm hành động: dữ liệu không hợp lệ.');
+      setAnnouncement('Không thể thêm hành động.');
       return;
     }
 
@@ -131,6 +230,15 @@ export function SituationshipAnalyzer() {
     setAnnouncement('Đã xóa một hành động khỏi lịch sử.');
   }
 
+  const statusAnnouncement =
+    message.status === 'TIMED_OUT'
+      ? 'Seen không rep. Đã chuyển sang trạng thái kết thúc.'
+      : message.status === 'WAITING'
+        ? 'Đang chờ phản hồi từ Ai Đó trong 5 giây.'
+        : message.status === 'REPLIED'
+          ? 'Ai Đó đã phản hồi. Timer đã được hủy.'
+          : announcement;
+
   return (
     <main className={styles.page}>
       <div className={styles.container}>
@@ -138,12 +246,10 @@ export function SituationshipAnalyzer() {
           <p className={styles.eyebrow}>
             LAB 03 BONUS EXERCISE
           </p>
-
           <h1>Hẹn Hò Nhưng Không Yêu</h1>
-
           <p className={styles.subtitle}>
-            SituationshipAnalyzer — Finite State Machine
-            &amp; Asymmetric Effort
+            SituationshipAnalyzer — FSM, Effort &amp;
+            Seen Không Rep
           </p>
         </header>
 
@@ -161,14 +267,11 @@ export function SituationshipAnalyzer() {
           </p>
 
           <p className={styles.helper}>
-            Chỉ những sự kiện hợp lệ mới được hiển thị.
-            Mỗi thời điểm chỉ có một trạng thái.
+            Mỗi thời điểm chỉ có một trạng thái quan hệ.
+            Chỉ các transition hợp lệ được hiển thị.
           </p>
 
-          <div
-            className={styles.actions}
-            aria-label="Chuyển trạng thái"
-          >
+          <div className={styles.actions}>
             {availableEvents
               .filter((event) => event !== 'GHOST_TIMEOUT')
               .map((event) => (
@@ -186,6 +289,72 @@ export function SituationshipAnalyzer() {
 
         <section
           className={styles.panel}
+          aria-labelledby="message-heading"
+        >
+          <div className={styles.sectionHeading}>
+            <h2 id="message-heading">Seen Không Rep</h2>
+            <span className={styles.count}>
+              {message.status}
+            </span>
+          </div>
+
+          <p className={styles.helper}>
+            Gửi tin nhắn để bắt đầu hạn chờ 5 giây.
+            Không có phản hồi tự động hoặc dịch vụ chat thật.
+          </p>
+
+          <p className={styles.messageInfo}>
+            {MESSAGE_LABELS[message.status]}
+          </p>
+
+          {phase === 'DATING_NO_LOVE' ? (
+            <div className={styles.actions}>
+              <button
+                type="button"
+                className={styles.primaryButton}
+                disabled={actor !== 'EM'}
+                onClick={handleSendMessage}
+              >
+                {isWaiting
+                  ? 'Gửi lại (đặt lại 5 giây)'
+                  : 'Gửi tin nhắn'}
+              </button>
+
+              {isWaiting && (
+                <>
+                  <button
+                    type="button"
+                    className={styles.button}
+                    onClick={handleReply}
+                  >
+                    Ai Đó phản hồi
+                  </button>
+
+                  <button
+                    type="button"
+                    className={styles.removeButton}
+                    onClick={handleCancel}
+                  >
+                    Dừng chờ
+                  </button>
+                </>
+              )}
+            </div>
+          ) : (
+            <p className={styles.helper}>
+              Chỉ có thể gửi tin nhắn demo khi đang
+              ở trạng thái hẹn hò chưa yêu.
+            </p>
+          )}
+
+          <p className={styles.helper}>
+            Request #{message.requestId} · Deadline:{' '}
+            {MESSAGE_TIMEOUT_MS / 1000} giây mỗi lần gửi.
+          </p>
+        </section>
+
+        <section
+          className={styles.panel}
           aria-labelledby="effort-heading"
         >
           <div className={styles.sectionHeading}>
@@ -194,13 +363,15 @@ export function SituationshipAnalyzer() {
 
           <p className={styles.helper}>
             Hệ số minh họa: Em × 0.1, Ai Đó × 50.
-            Điểm không phản ánh giá trị thực của một mối quan hệ.
+            Đây không phải thước đo quan hệ thực tế.
           </p>
 
           <div className={styles.scoreGrid}>
             <article className={styles.scoreCard}>
               <h3>Em</h3>
-              <strong>{formatScore(summary.EM.totalImpact)}</strong>
+              <strong>
+                {formatScore(summary.EM.totalImpact)}
+              </strong>
               <p>
                 {summary.EM.totalSteps} bước ·{' '}
                 {summary.EM.signalCount} hành động
@@ -246,14 +417,14 @@ export function SituationshipAnalyzer() {
               <label htmlFor={actorId}>
                 Người thực hiện
               </label>
-
               <select
                 id={actorId}
                 value={actor}
-                onChange={(event) => {
-                  setActor(event.target.value as EffortActor);
-                  setFormError('');
-                }}
+                onChange={(event) =>
+                  handleActorChange(
+                    event.target.value as EffortActor,
+                  )
+                }
               >
                 <option value="EM">Em</option>
                 <option value="AI_DO">Ai Đó</option>
@@ -264,7 +435,6 @@ export function SituationshipAnalyzer() {
               <label htmlFor={stepsId}>
                 Số bước nỗ lực
               </label>
-
               <input
                 id={stepsId}
                 type="number"
@@ -284,10 +454,7 @@ export function SituationshipAnalyzer() {
             </div>
 
             {formError && (
-              <p
-                id={errorId}
-                className={styles.error}
-              >
+              <p id={errorId} className={styles.error}>
                 {formError}
               </p>
             )}
@@ -309,7 +476,6 @@ export function SituationshipAnalyzer() {
             <h2 id="history-heading">
               Lịch sử hành động
             </h2>
-
             <span className={styles.count}>
               {effortLog.length} mục
             </span>
@@ -330,7 +496,6 @@ export function SituationshipAnalyzer() {
                     <strong>
                       {ACTOR_LABELS[signal.actor]}
                     </strong>
-
                     <p>
                       {signal.steps} bước ×{' '}
                       {signal.multiplier} ={' '}
@@ -366,7 +531,7 @@ export function SituationshipAnalyzer() {
           aria-live="polite"
           aria-atomic="true"
         >
-          {announcement}
+          {statusAnnouncement}
         </output>
 
         <footer className={styles.footer}>
