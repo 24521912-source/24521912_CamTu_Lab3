@@ -1,4 +1,9 @@
-import type { CSSProperties, PointerEvent } from "react";
+import {
+  memo,
+  type CSSProperties,
+  type PointerEvent,
+} from "react";
+
 import type { PianoNote } from "../piano/types";
 import styles from "./PianoKey.module.css";
 
@@ -11,7 +16,7 @@ interface PianoKeyProps {
   onTap: (midi: number) => void;
 }
 
-export default function PianoKey({
+function PianoKeyComponent({
   note,
   isPressed,
   left,
@@ -19,20 +24,36 @@ export default function PianoKey({
   onEnd,
   onTap,
 }: PianoKeyProps) {
-  function handlePointerDown(event: PointerEvent<HTMLButtonElement>) {
-    if (event.pointerType === "mouse" && event.button !== 0) {
+  function handlePointerDown(
+    event: PointerEvent<HTMLButtonElement>
+  ) {
+    if (
+      event.pointerType === "mouse" &&
+      event.button !== 0
+    ) {
       return;
     }
 
-    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.setPointerCapture(
+      event.pointerId
+    );
+
     onStart(note.midi, event.pointerId);
   }
 
-  function handlePointerEnd(event: PointerEvent<HTMLButtonElement>) {
+  function handlePointerEnd(
+    event: PointerEvent<HTMLButtonElement>
+  ) {
     onEnd(note.midi, event.pointerId);
 
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
+    if (
+      event.currentTarget.hasPointerCapture(
+        event.pointerId
+      )
+    ) {
+      event.currentTarget.releasePointerCapture(
+        event.pointerId
+      );
     }
   }
 
@@ -53,19 +74,28 @@ export default function PianoKey({
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerEnd}
       onPointerCancel={handlePointerEnd}
-      onPointerLeave={handlePointerEnd}
       onLostPointerCapture={handlePointerEnd}
       onClick={(event) => {
-        // Native keyboard and assistive-technology activation.
-        // Pointer clicks are already handled by pointer events.
         if (event.detail === 0) {
           onTap(note.midi);
         }
       }}
     >
-      <span aria-hidden="true" className={styles.noteLabel}>
+      <span
+        aria-hidden="true"
+        className={styles.noteLabel}
+      >
         {note.name}
       </span>
     </button>
   );
 }
+
+/**
+ * Re-render only when props change.
+ */
+const PianoKey = memo(PianoKeyComponent);
+
+PianoKey.displayName = "PianoKey";
+
+export default PianoKey;
