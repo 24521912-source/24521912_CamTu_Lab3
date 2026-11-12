@@ -212,3 +212,66 @@
     font-size: 15px;
   }
 }
+
+
+/* T08: Layout resilience and responsive refinements */
+
+.page {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.container {
+  width: min(1160px, calc(100% - 32px));
+  min-width: 0;
+}
+
+.headerInner,
+.sectionHeader,
+.scenarioPanel {
+  min-width: 0;
+}
+
+.cardGrid {
+  min-width: 0;
+}
+
+.scenarioField {
+  min-width: 0;
+}
+
+.scenarioSelect {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: calc(100% - 24px);
+  }
+
+  .headerInner {
+    gap: 12px;
+  }
+
+  .hero {
+    padding-block: 32px 24px;
+  }
+
+  .heading {
+    font-size: clamp(34px, 9vw, 52px);
+  }
+
+  .scenarioPanel {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .scenarioField {
+    flex-basis: 100%;
+  }
+
+  .section {
+    padding-block: 28px 44px;
+  }
+}

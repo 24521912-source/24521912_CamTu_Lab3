@@ -54,3 +54,30 @@ select:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* T08: Global accessibility refinements */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-wrap: break-word;
+}
+
+:focus-visible {
+  scroll-margin: 12px;
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

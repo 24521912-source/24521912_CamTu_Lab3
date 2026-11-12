@@ -209,11 +209,16 @@ export function Leaderboard({ squads }: LeaderboardProps) {
         </div>
       ) : (
         <div
-          className={styles.tableScroll}
-          role="region"
-          aria-label="Scrollable PUBG squad standings"
-          tabIndex={0}
-        >
+  className={styles.tableScroll}
+  role="region"
+  aria-label="Scrollable PUBG squad standings"
+  aria-describedby={summaryId}
+  tabIndex={0}
+>
+    <p className={styles.scrollHint}>
+  On smaller screens, scroll the standings table
+  horizontally to view all score columns.
+</p>
           <table
             className={styles.table}
             aria-describedby={summaryId}

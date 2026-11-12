@@ -269,3 +269,54 @@
     transition: none;
   }
 }
+
+/* T08: Responsive and keyboard accessibility */
+
+.leaderboard {
+  min-width: 0;
+}
+
+.tableScroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tableScroll:focus-visible {
+  outline: 3px solid #f0b84b;
+  outline-offset: 3px;
+}
+
+.scrollHint {
+  margin: 10px 0 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.control,
+.resetButton,
+.emptyResetButton {
+  min-height: 44px;
+}
+
+.squadName {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .table {
+    min-width: 650px;
+  }
+}

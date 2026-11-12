@@ -250,3 +250,65 @@
 .feedback[data-result='pending'] {
   color: #ffe2a1;
 }
+
+
+/* T08: Accessibility and small-screen refinements */
+
+.card {
+  min-width: 0;
+}
+
+.title,
+.description,
+.availability,
+.feedback {
+  overflow-wrap: anywhere;
+}
+
+.claimButton {
+  min-height: 48px;
+  line-height: 1.4;
+}
+
+.claimButton:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.feedback {
+  line-height: 1.6;
+}
+
+.feedback:empty {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 18px;
+    gap: 12px;
+  }
+
+  .details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .price,
+  .stock {
+    font-size: 16px;
+  }
+
+  .timeValue {
+    font-size: clamp(17px, 5vw, 22px);
+  }
+
+  .claimButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .claimButton {
+    transition: none;
+  }
+}

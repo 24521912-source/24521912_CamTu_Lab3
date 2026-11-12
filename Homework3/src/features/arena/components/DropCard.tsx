@@ -143,11 +143,14 @@ export function DropCard({
           </span>
 
           <span
-            className={styles.phase}
-            data-phase={phase}
-          >
-            {phaseLabels[phase]}
-          </span>
+  className={styles.phase}
+  data-phase={phase}
+  role="status"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  {phaseLabels[phase]}
+</span>
         </div>
 
         <h3 id={headingId} className={styles.title}>
@@ -221,18 +224,33 @@ export function DropCard({
         </button>
 
         <p
-          className={styles.feedback}
-          role={
-            claimStatus.kind === 'conflict' ||
-            claimStatus.kind === 'error'
-              ? 'alert'
-              : 'status'
-          }
-          aria-atomic="true"
-          data-result={claimStatus.kind}
-        >
-          {claimStatus.message}
-        </p>
+  className={styles.feedback}
+  role="status"
+  aria-atomic="true"
+  data-result={claimStatus.kind}
+>
+  {claimStatus.kind !== 'conflict' &&
+  claimStatus.kind !== 'error'
+    ? claimStatus.message
+    : ''}
+</p>
+
+<p
+  className={styles.feedback}
+  role="alert"
+  aria-atomic="true"
+  data-result={
+    claimStatus.kind === 'conflict' ||
+    claimStatus.kind === 'error'
+      ? claimStatus.kind
+      : 'idle'
+  }
+>
+  {claimStatus.kind === 'conflict' ||
+  claimStatus.kind === 'error'
+    ? claimStatus.message
+    : ''}
+</p>
       </div>
     </article>
   );

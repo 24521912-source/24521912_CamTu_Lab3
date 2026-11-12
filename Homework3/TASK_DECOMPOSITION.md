@@ -28,7 +28,7 @@ Stack: React 19, Vite, TypeScript
 | T05 | Mock claim service and optimistic rollback | DONE | Not recorded |
 | T06 | PUBG leaderboard | DOne | Not recorded |
 | T07 | Arena integration and regression testing | DONE | Not recorded |
-| T08 | Responsive design and accessibility | TODO | Not recorded |
+| T08 | Responsive design and accessibility | DONE | Not recorded |
 | T09 | Documentation, audit and final defense | TODO | Not recorded |
 
 ## T01 — Project Setup and Documentation
@@ -366,29 +366,78 @@ Stack: React 19, Vite, TypeScript
 **Actual commit:** Not recorded
 
 
+
 ## T08 — Responsive Design and Accessibility
 
-**Goal:** Improve the integrated UI for 375px and desktop viewports.
+**Goal:** Improve responsive behavior, keyboard accessibility, screen-reader feedback, and WCAG 2.2 AA-oriented usability.
 
 **Dependencies:** T07.
 
-**Files:** Existing UI components and styles.
+**Files:**
+- src/features/arena/components/DropCard.tsx (modified)
+- src/features/arena/components/DropCard.module.css (modified)
+- src/features/arena/components/Leaderboard.tsx (modified)
+- src/features/arena/components/Leaderboard.module.css (modified)
+- src/features/arena/Arena.module.css (modified)
+- src/index.css (modified)
+- TASK_DECOMPOSITION.md (updated)
 
-**Input:** Integrated arena application.
+**Inputs:**
+- Integrated PUBG Arena from T07.
+- Existing airdrop states and claim messages.
+- Existing leaderboard controls and table.
 
-**Output:** Responsive, keyboard-accessible interface.
+**Outputs:**
+- Improved keyboard focus and responsive layout.
+- Accessible status and error announcements.
+- Scrollable leaderboard on small viewports.
+- Verified Lighthouse and manual accessibility evidence.
 
-**Invariants:** No page-level horizontal overflow; respect reduced-motion preference.
+**Contracts and invariants:**
+- Existing claim and inventory behavior remains unchanged.
+- Countdown updates must not spam live announcements.
+- Success and error feedback must remain understandable without color.
+- Interactive controls must remain keyboard operable.
+- The leaderboard may scroll horizontally inside its container.
+- The document itself must not require horizontal scrolling at 375px.
+- Reduced-motion preferences must be respected.
+- Demo data and non-commercial labels remain visible.
 
-**Acceptance criteria:** Keyboard navigation, focus indicators, meaningful labels, status feedback and contrast checks. Aim for Lighthouse Accessibility 100 and WCAG 2.2 AA.
+**Acceptance criteria:**
+- Build and lint pass.
+- No application errors in the Console.
+- Responsive checks pass at 320px, 375px, 768px and desktop.
+- No page-level horizontal overflow at 375px.
+- Keyboard interaction and visible focus checks pass.
+- Screen-reader behavior is reviewed.
+- Relevant text and UI contrast are checked.
+- Reduced-motion behavior is checked.
+- Lighthouse Accessibility is measured and documented.
+- Existing timer, claims, FSM and leaderboard behavior remain functional.
 
-**Tests:** Chrome DevTools, 375px viewport, keyboard-only interaction, Lighthouse, build and lint.
+**Verification:**
+- npm run build
+- npm run lint
+- npm run preview
+- Chrome DevTools responsive inspection
+- 200% browser zoom
+- Keyboard-only navigation
+- Screen-reader checks
+- Contrast inspection
+- Reduced-motion testing
+- Lighthouse Accessibility mobile audit
+- T02–T07 functional regression testing
 
-**Status:** TODO
+**Lighthouse Accessibility Score:** Record the actual measured score.
 
-**Suggested commit:** style(arena): improve responsive accessibility
+**Manual Accessibility Findings:** Record actual findings only.
+
+**Status:** DONE
+
+**Suggested commit:** fix(arena): improve responsive accessibility and feedback
 
 **Actual commit:** Not recorded
+
 
 ## T09 — Documentation and Final Verification
 
