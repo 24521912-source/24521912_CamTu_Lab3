@@ -25,7 +25,7 @@ Stack: React 19, Vite, TypeScript
 | T02 | Domain contracts and drop FSM | DONE | Not recorded |
 | T03 | Anti-drift countdown hook | Done | Not recorded |
 | T04 | Accessible airdrop cards | DONE | Not recorded |
-| T05 | Mock claim service and optimistic rollback | TODO | Not recorded |
+| T05 | Mock claim service and optimistic rollback | DONE | Not recorded |
 | T06 | PUBG leaderboard | TODO | Not recorded |
 | T07 | Arena integration and regression testing | TODO | Not recorded |
 | T08 | Responsive design and accessibility | TODO | Not recorded |
@@ -129,8 +129,6 @@ Stack: React 19, Vite, TypeScript
 
 **Actual commit:** Not recorded
 
-## T04 — Accessible Airdrop Cards
-
 
 ## T04 — Accessible Airdrop Cards
 
@@ -195,12 +193,6 @@ Stack: React 19, Vite, TypeScript
 **Actual commit:** Not recorded
 
 
-**Status:** done
-
-**Suggested commit:** feat(arena): add accessible airdrop cards
-
-**Actual commit:** Not recorded
-
 ## T05 — Optimistic Claim and Rollback
 
 **Goal:** Implement a deterministic mock claim service and safe optimistic inventory updates.
@@ -219,7 +211,7 @@ Stack: React 19, Vite, TypeScript
 
 **Tests:** Deterministic scenarios and browser checks.
 
-**Status:** TODO
+**Status:** DONE
 
 **Suggested commit:** feat(arena): implement optimistic claims and rollback
 

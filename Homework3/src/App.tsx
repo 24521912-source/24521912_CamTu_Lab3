@@ -8,11 +8,20 @@ import {
 
 import type {
   DropItem,
+  DropPhase,
 } from './features/arena/domain/types';
+
+import type {
+  MockClaimOutcome,
+} from './features/arena/services/mockClaimService';
 
 import {
   DropCard,
 } from './features/arena/components/DropCard';
+
+import {
+  useDemoClaims,
+} from './features/arena/hooks/useDemoClaims';
 
 import styles from './features/arena/Arena.module.css';
 
@@ -44,18 +53,10 @@ function getScenarioOffset(
 
     case 'live':
     case 'sold-out':
-      return (
-        referenceItem.dropEpochMs +
-        60_000 -
-        now
-      );
+      return referenceItem.dropEpochMs + 60_000 - now;
 
     case 'expired':
-      return (
-        referenceItem.expiresEpochMs +
-        1000 -
-        now
-      );
+      return referenceItem.expiresEpochMs + 1000 - now;
   }
 }
 
@@ -80,19 +81,42 @@ function App() {
       serverOffsetMs: 0,
     });
 
+  const [mockOutcome, setMockOutcome] =
+    useState<MockClaimOutcome>('success');
+
+  const {
+    items,
+    claim,
+    reset,
+    getStatus,
+  } = useDemoClaims(demoDropItems);
+
   function handleScenarioChange(
-    value: DemoScenario,
+    scenario: DemoScenario,
   ) {
+    // Cancel outstanding mock requests and restore demo data.
+    reset();
+
     setScenarioState({
-      scenario: value,
-      serverOffsetMs: getScenarioOffset(value),
+      scenario,
+      serverOffsetMs: getScenarioOffset(scenario),
     });
+  }
+
+  function handleClaim(
+    itemId: string,
+    phase: DropPhase,
+  ) {
+    // Each request captures the selected outcome at click time.
+    void claim(itemId, phase, mockOutcome);
   }
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div className={`${styles.container} ${styles.headerInner}`}>
+        <div
+          className={`${styles.container} ${styles.headerInner}`}
+        >
           <div className={styles.brand}>
             <span className={styles.brandTop}>
               KRAFTON × PUBG
@@ -129,11 +153,11 @@ function App() {
           </h1>
 
           <p className={styles.heroDescription}>
-            Explore a simulated PUBG Vietnam
-            Championship airdrop experience featuring
-            PVS Grand Finals VIP tickets and G-Coin
-            crates. All inventory, prices, countdowns,
-            and interactions are for local demonstration.
+            Explore a simulated PUBG Vietnam Championship
+            airdrop experience featuring PVS Grand Finals
+            VIP tickets and G-Coin crates. All inventory,
+            prices, countdowns, and claims are local demo
+            data.
           </p>
         </section>
 
@@ -141,8 +165,9 @@ function App() {
           <strong>Demo disclaimer: </strong>
           {DEMO_DATA_NOTICE}
           {' '}
-          This is an educational interface and is not an
-          official ticket store or payment service.
+          This is an educational interface.
+          No real ticket, reward, payment, or purchase
+          is provided.
         </aside>
 
         <section
@@ -152,17 +177,19 @@ function App() {
           <div className={styles.sectionHeader}>
             <div>
               <p className={styles.eyebrow}>
-                LIMITED DROP PREVIEW
+                LIMITED DROP SIMULATION
               </p>
+
               <h2
                 id="drops-heading"
                 className={styles.sectionTitle}
               >
                 Featured Airdrops
               </h2>
+
               <p className={styles.sectionDescription}>
-                View simulated stock, VND prices,
-                countdowns, and drop availability.
+                Test optimistic inventory changes, mock
+                claim outcomes, and rollback behavior.
               </p>
             </div>
           </div>
@@ -202,21 +229,53 @@ function App() {
               </select>
             </div>
 
+            <div className={styles.scenarioField}>
+              <label
+                htmlFor="mock-outcome"
+                className={styles.scenarioLabel}
+              >
+                Next mock claim result
+              </label>
+
+              <select
+                id="mock-outcome"
+                className={styles.scenarioSelect}
+                value={mockOutcome}
+                onChange={(event) => {
+                  setMockOutcome(
+                    event.target.value as MockClaimOutcome,
+                  );
+                }}
+                aria-describedby="scenario-help"
+              >
+                <option value="success">
+                  Success — confirm simulated claim
+                </option>
+                <option value="conflict">
+                  409 Conflict — rollback
+                </option>
+                <option value="error">
+                  503 Service Error — rollback
+                </option>
+              </select>
+            </div>
+
             <p
               id="scenario-help"
               className={styles.scenarioHelp}
             >
-              Test controls only. Changing a scenario
-              adjusts the local preview clock or displayed
-              demo stock. It does not change any actual
-              inventory or contact a server.
+              All actions are deterministic simulations.
+              A claim uses the selected mock result at
+              click time. Switching the demo scenario
+              cancels pending requests and resets
+              inventory. No external API is called.
             </p>
           </div>
 
           <div className={styles.cardGrid}>
-            {demoDropItems.map((item) => (
+            {items.map((item) => (
               <DropCard
-  key={`${item.id}-${scenarioState.scenario}`}
+                key={`${item.id}-${scenarioState.scenario}`}
                 item={getPreviewItem(
                   item,
                   scenarioState.scenario,
@@ -224,6 +283,8 @@ function App() {
                 serverOffsetMs={
                   scenarioState.serverOffsetMs
                 }
+                claimStatus={getStatus(item.id)}
+                onClaim={handleClaim}
               />
             ))}
           </div>
@@ -235,8 +296,9 @@ function App() {
           <p className={styles.footerText}>
             Educational PUBG-inspired demo for UIT
             Web Application Development 2026.
-            No real purchase, ticket reservation,
-            or inventory claim is performed.
+            All claims are simulated. No ticket
+            reservation, payment, or server-side
+            inventory update takes place.
           </p>
         </div>
       </footer>

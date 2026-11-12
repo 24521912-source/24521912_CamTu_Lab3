@@ -1,5 +1,5 @@
 
-import { useId, useState } from 'react';
+import { useId } from 'react';
 
 import {
   formatPriceVnd,
@@ -14,6 +14,10 @@ import type {
   DropPhase,
 } from '../domain/types';
 
+import type {
+  ClaimUiStatus,
+} from '../hooks/useDemoClaims';
+
 import {
   usePubgAirdropTimer,
 } from '../hooks/usePubgAirdropTimer';
@@ -23,6 +27,11 @@ import styles from './DropCard.module.css';
 interface DropCardProps {
   readonly item: DropItem;
   readonly serverOffsetMs: number;
+  readonly claimStatus: ClaimUiStatus;
+  readonly onClaim: (
+    itemId: string,
+    phase: DropPhase,
+  ) => void;
 }
 
 const phaseLabels: Record<DropPhase, string> = {
@@ -34,7 +43,6 @@ const phaseLabels: Record<DropPhase, string> = {
 
 function formatRemainingTime(remainingMs: number): string {
   const totalSeconds = Math.ceil(remainingMs / 1000);
-
   const days = Math.floor(totalSeconds / 86400);
   const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -70,12 +78,12 @@ function getDisplayPhase(
 export function DropCard({
   item,
   serverOffsetMs,
+  claimStatus,
+  onClaim,
 }: DropCardProps) {
   const headingId = useId();
   const descriptionId = useId();
   const statusId = useId();
-
-  const [message, setMessage] = useState('');
 
   const startRemainingMs = usePubgAirdropTimer(
     item.dropEpochMs,
@@ -93,20 +101,11 @@ export function DropCard({
     item.remainingStock,
   );
 
-  const canClaim = canClaimDrop(
-    phase,
-    item.remainingStock,
-  );
+  const isPending = claimStatus.kind === 'pending';
 
-  function handlePreviewClaim() {
-    if (!canClaim) {
-      return;
-    }
-
-    setMessage(
-      'This is a UI preview only. No claim or purchase was made. Claim simulation is implemented in Task 05.',
-    );
-  }
+  const canClaim =
+    canClaimDrop(phase, item.remainingStock) &&
+    !isPending;
 
   const countdownLabel =
     phase === 'WARMUP'
@@ -122,14 +121,15 @@ export function DropCard({
         ? formatRemainingTime(expiryRemainingMs)
         : phaseLabels[phase];
 
-  const buttonLabel =
-    phase === 'WARMUP'
+  const buttonLabel = isPending
+    ? 'Processing demo claim...'
+    : phase === 'WARMUP'
       ? 'Not open yet'
       : phase === 'LOOTED_OUT'
         ? 'Sold out'
         : phase === 'EXPIRED'
           ? 'Drop expired'
-          : 'Preview claim';
+          : 'Simulate claim';
 
   return (
     <article
@@ -138,6 +138,7 @@ export function DropCard({
       aria-describedby={descriptionId}
       data-phase={phase}
       data-item-id={item.id}
+      data-claim-status={claimStatus.kind}
     >
       <div className={styles.visual} aria-hidden="true">
         <span className={styles.visualSymbol}>
@@ -188,7 +189,10 @@ export function DropCard({
             <span className={styles.detailLabel}>
               Demo inventory
             </span>
-            <strong className={styles.stock}>
+            <strong
+              className={styles.stock}
+              data-testid={`stock-${item.id}`}
+            >
               {item.remainingStock} available
             </strong>
           </div>
@@ -198,6 +202,7 @@ export function DropCard({
           <span className={styles.detailLabel}>
             {countdownLabel}
           </span>
+
           <output
             className={styles.timeValue}
             aria-live="off"
@@ -209,10 +214,10 @@ export function DropCard({
 
         <p className={styles.availability} id={statusId}>
           {phase === 'WARMUP' &&
-            'Claim preview becomes available when the demo drop opens.'}
+            'Claims are disabled until the demo drop opens.'}
 
           {phase === 'AIRDROP_LIVE' &&
-            'Demo preview is available. No real transaction will occur.'}
+            'Simulated claims are available. No transaction will occur.'}
 
           {phase === 'LOOTED_OUT' &&
             'The simulated inventory has been depleted.'}
@@ -226,18 +231,24 @@ export function DropCard({
           className={styles.claimButton}
           disabled={!canClaim}
           aria-describedby={statusId}
-          onClick={handlePreviewClaim}
+          aria-busy={isPending}
+          onClick={() => onClaim(item.id, phase)}
         >
           {buttonLabel}
         </button>
 
         <p
           className={styles.feedback}
-          role="status"
-          aria-live="polite"
+          role={
+            claimStatus.kind === 'conflict' ||
+            claimStatus.kind === 'error'
+              ? 'alert'
+              : 'status'
+          }
           aria-atomic="true"
+          data-result={claimStatus.kind}
         >
-          {message}
+          {claimStatus.message}
         </p>
       </div>
     </article>

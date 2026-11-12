@@ -231,3 +231,22 @@
     transform: none;
   }
 }
+
+.claimButton[aria-busy='true'] {
+  background: #506479;
+  color: #ffffff;
+  cursor: progress;
+}
+
+.feedback[data-result='conflict'],
+.feedback[data-result='error'] {
+  color: #ffd0d0;
+}
+
+.feedback[data-result='success'] {
+  color: #b8f5d4;
+}
+
+.feedback[data-result='pending'] {
+  color: #ffe2a1;
+}
