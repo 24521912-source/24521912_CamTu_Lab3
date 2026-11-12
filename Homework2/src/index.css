@@ -1,16 +1,22 @@
 :root {
   font-family: Inter, system-ui, Arial, sans-serif;
+  color: #172033;
+  background: #f3f6fb;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   min-width: 320px;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -18,19 +24,136 @@ body {
   margin: 0;
 }
 
-button {
-  font-family: inherit;
-}
-
 #root {
   width: 100%;
+  min-width: 0;
   min-height: 100vh;
 }
 
+button,
+select,
+input {
+  font: inherit;
+}
+
+/* Recording and replay controls only.
+   Piano key buttons use aria-pressed and are excluded. */
+
+section[aria-labelledby="recording-heading"] button,
+section[aria-labelledby="replay-heading"] button {
+  min-height: 44px;
+  padding: 10px 16px;
+
+  border: 1px solid #344054;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #172033;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+section[aria-labelledby="recording-heading"] button:hover:not(:disabled),
+section[aria-labelledby="replay-heading"] button:hover:not(:disabled) {
+  background: #e8f2ff;
+}
+
+section[aria-labelledby="recording-heading"] button:disabled,
+section[aria-labelledby="replay-heading"] button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+section[aria-labelledby="replay-heading"] select {
+  min-height: 44px;
+  min-width: 100px;
+  padding: 8px 12px;
+
+  border: 1px solid #667085;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #172033;
+}
+
+section[aria-labelledby="recording-heading"] button:focus-visible,
+section[aria-labelledby="replay-heading"] button:focus-visible,
+section[aria-labelledby="replay-heading"] select:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+section[aria-labelledby="recording-heading"] h2,
+section[aria-labelledby="replay-heading"] h2 {
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+/* Recorded note table */
+
+section[aria-labelledby="recording-heading"] table {
+  width: 100%;
+  min-width: 480px;
+
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+section[aria-labelledby="recording-heading"] caption {
+  padding: 12px 8px;
+  text-align: left;
+  color: #48566b;
+}
+
+section[aria-labelledby="recording-heading"] th {
+  background: #edf2f9;
+  color: #172033;
+  font-weight: 700;
+}
+
+section[aria-labelledby="recording-heading"] th,
+section[aria-labelledby="recording-heading"] td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #d8e0eb;
+  text-align: left;
+  white-space: nowrap;
+}
+
+section[aria-labelledby="recording-heading"] tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+/* Mobile controls */
+
+@media (max-width: 480px) {
+  section[aria-labelledby="recording-heading"],
+  section[aria-labelledby="replay-heading"] {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  section[aria-labelledby="recording-heading"] button,
+  section[aria-labelledby="replay-heading"] button {
+    min-height: 48px;
+  }
+
+  section[aria-labelledby="replay-heading"] select {
+    min-height: 48px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
-    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
