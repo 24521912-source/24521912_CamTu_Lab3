@@ -4,7 +4,12 @@ import { useState } from 'react';
 import {
   DEMO_DATA_NOTICE,
   demoDropItems,
+  demoSquads,
 } from './features/arena/domain/demoData';
+
+import {
+  Leaderboard,
+} from './features/arena/components/Leaderboard';
 
 import type {
   DropItem,
@@ -288,7 +293,9 @@ function App() {
               />
             ))}
           </div>
-        </section>
+                </section>
+
+        <Leaderboard squads={demoSquads} />
       </main>
 
       <footer className={styles.footer}>

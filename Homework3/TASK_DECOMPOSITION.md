@@ -26,7 +26,7 @@ Stack: React 19, Vite, TypeScript
 | T03 | Anti-drift countdown hook | Done | Not recorded |
 | T04 | Accessible airdrop cards | DONE | Not recorded |
 | T05 | Mock claim service and optimistic rollback | DONE | Not recorded |
-| T06 | PUBG leaderboard | TODO | Not recorded |
+| T06 | PUBG leaderboard | DOne | Not recorded |
 | T07 | Arena integration and regression testing | TODO | Not recorded |
 | T08 | Responsive design and accessibility | TODO | Not recorded |
 | T09 | Documentation, audit and final defense | TODO | Not recorded |
@@ -217,27 +217,75 @@ Stack: React 19, Vite, TypeScript
 
 **Actual commit:** Not recorded
 
+
 ## T06 — PUBG Leaderboard
 
-**Goal:** Display demo squad standings with filtering and sorting.
+**Goal:** Implement a responsive, accessible PUBG Vietnam demo leaderboard with deterministic filtering and sorting.
 
-**Dependencies:** T02.
+**Dependencies:** T02, T04, T05.
 
-**Files:** Leaderboard components, demo fixtures, styles and tests.
+**Files:**
+- src/features/arena/domain/leaderboardLogic.ts (new)
+- src/features/arena/domain/leaderboardChecks.ts (new)
+- src/features/arena/components/Leaderboard.tsx (new)
+- src/features/arena/components/Leaderboard.module.css (new)
+- src/App.tsx (modified)
+- TASK_DECOMPOSITION.md (updated)
 
-**Input:** Demo records for The Expendables, Cerberus Esports, Roy Esports and AGG.
+**Input:**
+- Typed squad records from demoSquads.
+- User-entered search text.
+- Minimum WWCD filter.
+- Selected sorting metric.
 
-**Output:** Accessible filterable and sortable standings.
+**Output:**
+- Accessible and responsive leaderboard.
+- Squad filtering and deterministic sorting.
+- Derived total points.
+- Empty state and reset controls.
 
-**Invariants:** Stable squad IDs, deterministic tie breakers and derived totals.
+**Contracts and invariants:**
+- Squad records use stable squadId values.
+- All scores are explicitly labeled demo data.
+- Total points equal placement points plus kill points.
+- WWCD is shown separately.
+- Filtering is case-insensitive and trims whitespace.
+- Sorting uses descending numeric metrics.
+- Tie breakers are deterministic.
+- Original squad data is never mutated.
+- Filtered and sorted rows are derived from source data.
+- No external API or real-time results are used.
 
-**Acceptance criteria:** WWCD, placement and kill sorting; visible filtering; correct empty state; accessible controls.
+**Acceptance criteria:**
+- All four required squads are displayed.
+- All six table columns contain correct data.
+- Search by squad name works.
+- Minimum WWCD filtering works.
+- WWCD, placement, kill and total sorting work.
+- Equal-score ties are resolved deterministically.
+- Combined filters and empty results are handled.
+- Reset controls restore default filters.
+- Semantic HTML and labeled controls are used.
+- Keyboard navigation works.
+- The 375px viewport remains usable.
+- Existing airdrop claim behavior is preserved.
+- Build and lint pass.
 
-**Tests:** Sorting, ties, filtering, browser, build and lint.
+**Tests:**
+- npm run build
+- npm run lint
+- 20 deterministic leaderboard checks
+- Manual search and filtering tests
+- Sorting and tie-breaker checks
+- Empty-state and reset checks
+- Keyboard interaction checks
+- 375px responsive inspection
+- Browser Console inspection
+- Airdrop regression checks
 
-**Status:** TODO
+**Status:** DONE
 
-**Suggested commit:** feat(arena): add filterable PUBG leaderboard
+**Suggested commit:** feat(arena): implement filterable PUBG leaderboard
 
 **Actual commit:** Not recorded
 
