@@ -455,21 +455,58 @@ feat(bonus): implement ghosting timer and safe cleanup
 - Git commit:
 
 
-## T07 — Documentation and Final Review
 
-Status: TODO
+## T07 — Final Documentation, Submission Checklist & Defense
+
+Status: IN PROGRESS
 
 Goal:
-Finalize documentation, review evidence and Git history, and prepare a short defense.
+Finalize the project documentation, verify submission
+readiness, and prepare a 3–5 minute technical defense.
 
-Prerequisite: T06 DONE
+Prerequisites:
+- T01–T06 DONE
+- T06_VERIFICATION.md completed
+- T06 Git commit completed
 
-Tests:
-- Documentation reviewed
-- Task status verified
-- AI failure evidence reviewed
-- Git history reviewed
-- Previous exercises preserved
+Deliverables:
+- Updated README.md
+- Reviewed TASK_DECOMPOSITION.md
+- Reviewed student-authored AI_FAILURE_AUDIT.md
+- Reviewed T06_VERIFICATION.md
+- Final test/build/lint verification
+- Submission checklist
+- 3–5 minute defense preparation
+- Final Git commit
 
-Suggested commit:
-docs(bonus): finalize documentation and review
+Acceptance Criteria:
+- README matches actual source code and scripts.
+- FSM and Effort Model are explained accurately.
+- Timer lifecycle and StrictMode cleanup are documented.
+- Actual test results are recorded without fabrication.
+- Actual Lighthouse scores are referenced correctly.
+- Evidence paths are verified.
+- AI Failure Audit has been independently reviewed.
+- Submission scope matches the assignment requirements.
+- No unwanted secrets or generated dependencies are tracked.
+- Final npm run test passes.
+- Final npm run build passes.
+- Final npm run lint passes.
+- Production preview smoke test passes.
+- Git staged changes are reviewed.
+- Final commit succeeds.
+- A 3–5 minute defense can be delivered.
+
+Verification:
+- git status -sb
+- git log --oneline -- .
+- npm run test
+- npm run build
+- npm run lint
+- npm run preview
+- git diff --check
+- git diff --cached --check
+
+Suggested Commit:
+docs(bonus): finalize documentation and submission readiness
+
