@@ -21,8 +21,8 @@ Stack: React 19, Vite, TypeScript
 
 | ID | Task | Status | Commit |
 |---|---|---|---|
-| T01 | Project setup and documentation | IN PROGRESS | Not recorded |
-| T02 | Domain contracts and drop FSM | TODO | Not recorded |
+| T01 | Project setup and documentation | DONE | Not recorded |
+| T02 | Domain contracts and drop FSM | DONE | Not recorded |
 | T03 | Anti-drift countdown hook | TODO | Not recorded |
 | T04 | Accessible airdrop cards | TODO | Not recorded |
 | T05 | Mock claim service and optimistic rollback | TODO | Not recorded |
@@ -66,7 +66,7 @@ Stack: React 19, Vite, TypeScript
 - git status -sb
 - git log -1 --oneline
 
-**Status:** IN PROGRESS
+**Status:** DONE
 
 **Suggested commit:** chore(arena): initialize React project and task plan
 
@@ -90,7 +90,7 @@ Stack: React 19, Vite, TypeScript
 
 **Tests:** TypeScript build and deterministic transition tests when the test infrastructure is available.
 
-**Status:** TODO
+**Status:** DONE
 
 **Suggested commit:** feat(arena): define domain contracts and drop FSM
 
