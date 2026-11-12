@@ -1,6 +1,6 @@
 
 import { useId } from 'react';
-
+import { resolveDropPhase } from '../domain/resolveDropPhase';
 import {
   formatPriceVnd,
 } from '../domain/demoData';
@@ -26,6 +26,7 @@ import styles from './DropCard.module.css';
 
 interface DropCardProps {
   readonly item: DropItem;
+  readonly initialStock: number;
   readonly serverOffsetMs: number;
   readonly claimStatus: ClaimUiStatus;
   readonly onClaim: (
@@ -55,28 +56,10 @@ function formatRemainingTime(remainingMs: number): string {
   return `${hours}h ${minutes}m ${seconds}s`;
 }
 
-function getDisplayPhase(
-  startRemainingMs: number,
-  expiryRemainingMs: number,
-  remainingStock: number,
-): DropPhase {
-  if (startRemainingMs > 0) {
-    return 'WARMUP';
-  }
-
-  if (expiryRemainingMs === 0) {
-    return 'EXPIRED';
-  }
-
-  if (remainingStock === 0) {
-    return 'LOOTED_OUT';
-  }
-
-  return 'AIRDROP_LIVE';
-}
 
 export function DropCard({
   item,
+  initialStock,
   serverOffsetMs,
   claimStatus,
   onClaim,
@@ -95,12 +78,12 @@ export function DropCard({
     serverOffsetMs,
   );
 
-  const phase = getDisplayPhase(
-    startRemainingMs,
-    expiryRemainingMs,
-    item.remainingStock,
-  );
-
+  const phase = resolveDropPhase(
+  item,
+  initialStock,
+  startRemainingMs,
+  expiryRemainingMs,
+);
   const isPending = claimStatus.kind === 'pending';
 
   const canClaim =

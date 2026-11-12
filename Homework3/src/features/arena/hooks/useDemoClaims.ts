@@ -121,11 +121,14 @@ export function useDemoClaims(
     }
   }, []);
 
-  const reset = useCallback(() => {
+  const reset = useCallback(
+  (nextItems: readonly DropItem[] = initialItems) => {
     cancelPending();
 
-    applyState(() => createInitialState(initialItems));
-  }, [applyState, cancelPending, initialItems]);
+    applyState(() => createInitialState(nextItems));
+  },
+  [applyState, cancelPending, initialItems],
+);
 
   useEffect(() => {
     mountedRef.current = true;

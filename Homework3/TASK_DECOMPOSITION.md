@@ -27,7 +27,7 @@ Stack: React 19, Vite, TypeScript
 | T04 | Accessible airdrop cards | DONE | Not recorded |
 | T05 | Mock claim service and optimistic rollback | DONE | Not recorded |
 | T06 | PUBG leaderboard | DOne | Not recorded |
-| T07 | Arena integration and regression testing | TODO | Not recorded |
+| T07 | Arena integration and regression testing | DONE | Not recorded |
 | T08 | Responsive design and accessibility | TODO | Not recorded |
 | T09 | Documentation, audit and final defense | TODO | Not recorded |
 
@@ -289,29 +289,82 @@ Stack: React 19, Vite, TypeScript
 
 **Actual commit:** Not recorded
 
-## T07 — Arena Integration
 
-**Goal:** Combine all features into one consistent experience.
+## T07 — Arena Integration and Regression Testing
 
-**Dependencies:** T03, T04, T05, T06.
+**Goal:** Integrate domain FSM, airdrop countdown, inventory snapshots, optimistic claims, and leaderboard without breaking existing behavior.
 
-**Files:** Existing application entry points and arena components.
+**Dependencies:** T02, T03, T04, T05, T06.
 
-**Input:** Verified timer, FSM, cards, claim handling and leaderboard.
+**Files:**
+- src/features/arena/domain/resolveDropPhase.ts (new)
+- src/features/arena/domain/scenarioData.ts (new)
+- src/features/arena/domain/integrationChecks.ts (new)
+- src/features/arena/hooks/useDemoClaims.ts (modified)
+- src/features/arena/components/DropCard.tsx (modified)
+- src/App.tsx (modified)
+- TASK_DECOMPOSITION.md (updated)
 
-**Output:** Integrated arena application.
+**Inputs:**
+- Existing domain contracts and FSM.
+- Absolute-time countdown snapshots.
+- Demo inventory and scenario selection.
+- Deterministic mock claim results.
+- Existing leaderboard data.
 
-**Invariants:** Preserve state consistency and prevent stale updates.
+**Outputs:**
+- Integrated phase presentation using FSM transitions.
+- Single inventory state owner for each scenario.
+- Last-unit claim testing.
+- Deterministic integration checks.
+- Verified regression behavior.
 
-**Acceptance criteria:** Complete user flows and important regression scenarios pass.
+**Contracts and invariants:**
+- Demo inventory is owned by the claim controller.
+- Scenario changes cancel pending claims and reset inventory.
+- Phases are reconstructed from valid FSM transitions.
+- Snapshot reconstruction does not represent a real backend event log.
+- Inventory never becomes negative.
+- A failed active claim rolls back its own decrement.
+- Stale asynchronous results cannot modify a newer scenario.
+- Existing squad data remains unchanged.
+- All claims remain local simulations.
 
-**Tests:** Browser interaction, Console, build, lint and available automated tests.
+**Acceptance criteria:**
+- Correct phase presentation for all demo scenarios.
+- Correct final-unit success and rollback behavior.
+- No duplicate pending claim for one item.
+- Independent claims across different items.
+- Safe cancellation during scenario changes.
+- No stale request success messages.
+- Existing leaderboard interactions remain functional.
+- Countdown and visibility behavior remain functional.
+- No new application errors in the browser Console.
+- Responsive and keyboard behavior remain usable.
+- Build and lint pass.
 
-**Status:** TODO
+**Tests:**
+- npm run build
+- npm run lint
+- 14 deterministic integration checks
+- Regression checks for T02, T03 and T06
+- Last-unit success test
+- Last-unit 409 and 503 rollback tests
+- Double-claim protection
+- Independent-item claim testing
+- Scenario cancellation and reset testing
+- Timer and background-tab checks
+- React StrictMode and lifecycle review
+- Leaderboard regression checks
+- Keyboard and 375px responsive checks
+- Browser Console inspection
 
-**Suggested commit:** feat(arena): integrate PUBG arena experience
+**Status:** DONE
+
+**Suggested commit:** refactor(arena): integrate drop FSM and inventory regression
 
 **Actual commit:** Not recorded
+
 
 ## T08 — Responsive Design and Accessibility
 

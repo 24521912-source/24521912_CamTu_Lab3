@@ -8,11 +8,15 @@ import {
 } from './features/arena/domain/demoData';
 
 import {
-  Leaderboard,
-} from './features/arena/components/Leaderboard';
+  getScenarioItems,
+  getScenarioOffset,
+} from './features/arena/domain/scenarioData';
 
 import type {
-  DropItem,
+  DemoScenario,
+} from './features/arena/domain/scenarioData';
+
+import type {
   DropPhase,
 } from './features/arena/domain/types';
 
@@ -25,58 +29,18 @@ import {
 } from './features/arena/components/DropCard';
 
 import {
+  Leaderboard,
+} from './features/arena/components/Leaderboard';
+
+import {
   useDemoClaims,
 } from './features/arena/hooks/useDemoClaims';
 
 import styles from './features/arena/Arena.module.css';
 
-type DemoScenario =
-  | 'scheduled'
-  | 'live'
-  | 'sold-out'
-  | 'expired';
-
 interface ScenarioState {
   readonly scenario: DemoScenario;
   readonly serverOffsetMs: number;
-}
-
-function getScenarioOffset(
-  scenario: DemoScenario,
-): number {
-  const referenceItem = demoDropItems[0];
-
-  if (!referenceItem) {
-    return 0;
-  }
-
-  const now = Date.now();
-
-  switch (scenario) {
-    case 'scheduled':
-      return 0;
-
-    case 'live':
-    case 'sold-out':
-      return referenceItem.dropEpochMs + 60_000 - now;
-
-    case 'expired':
-      return referenceItem.expiresEpochMs + 1000 - now;
-  }
-}
-
-function getPreviewItem(
-  item: DropItem,
-  scenario: DemoScenario,
-): DropItem {
-  if (scenario === 'sold-out') {
-    return {
-      ...item,
-      remainingStock: 0,
-    };
-  }
-
-  return item;
 }
 
 function App() {
@@ -99,12 +63,26 @@ function App() {
   function handleScenarioChange(
     scenario: DemoScenario,
   ) {
-    // Cancel outstanding mock requests and restore demo data.
-    reset();
+    const referenceItem = demoDropItems[0];
+
+    if (!referenceItem) {
+      return;
+    }
+
+    const nextItems = getScenarioItems(
+      scenario,
+      demoDropItems,
+    );
+
+    // Cancel pending requests and replace the inventory snapshot.
+    reset(nextItems);
 
     setScenarioState({
       scenario,
-      serverOffsetMs: getScenarioOffset(scenario),
+      serverOffsetMs: getScenarioOffset(
+        scenario,
+        referenceItem,
+      ),
     });
   }
 
@@ -112,7 +90,6 @@ function App() {
     itemId: string,
     phase: DropPhase,
   ) {
-    // Each request captures the selected outcome at click time.
     void claim(itemId, phase, mockOutcome);
   }
 
@@ -158,11 +135,11 @@ function App() {
           </h1>
 
           <p className={styles.heroDescription}>
-            Explore a simulated PUBG Vietnam Championship
-            airdrop experience featuring PVS Grand Finals
-            VIP tickets and G-Coin crates. All inventory,
-            prices, countdowns, and claims are local demo
-            data.
+            Explore a simulated PUBG Vietnam
+            Championship airdrop experience featuring
+            PVS Grand Finals VIP tickets and G-Coin
+            crates. All inventory, prices, countdowns,
+            and claims are local demo data.
           </p>
         </section>
 
@@ -193,8 +170,9 @@ function App() {
               </h2>
 
               <p className={styles.sectionDescription}>
-                Test optimistic inventory changes, mock
-                claim outcomes, and rollback behavior.
+                Test optimistic inventory updates,
+                mock claim outcomes, and rollback
+                behavior.
               </p>
             </div>
           </div>
@@ -224,6 +202,9 @@ function App() {
                 </option>
                 <option value="live">
                   Airdrop Live — simulated clock
+                </option>
+                <option value="last-unit">
+                  Last Unit — inventory boundary test
                 </option>
                 <option value="sold-out">
                   Sold Out — simulated stock
@@ -270,30 +251,36 @@ function App() {
               className={styles.scenarioHelp}
             >
               All actions are deterministic simulations.
-              A claim uses the selected mock result at
-              click time. Switching the demo scenario
-              cancels pending requests and resets
-              inventory. No external API is called.
+              The selected claim result is captured when
+              the request begins. Changing a demo scenario
+              cancels pending requests and replaces the
+              inventory snapshot. No external API is called.
             </p>
           </div>
 
           <div className={styles.cardGrid}>
-            {items.map((item) => (
-              <DropCard
-                key={`${item.id}-${scenarioState.scenario}`}
-                item={getPreviewItem(
-                  item,
-                  scenarioState.scenario,
-                )}
-                serverOffsetMs={
-                  scenarioState.serverOffsetMs
-                }
-                claimStatus={getStatus(item.id)}
-                onClaim={handleClaim}
-              />
-            ))}
+            {items.map((item) => {
+              const initialItem = demoDropItems.find(
+                (entry) => entry.id === item.id,
+              );
+
+              return (
+                <DropCard
+                  key={`${item.id}-${scenarioState.scenario}`}
+                  item={item}
+                  initialStock={
+                    initialItem?.remainingStock ?? 0
+                  }
+                  serverOffsetMs={
+                    scenarioState.serverOffsetMs
+                  }
+                  claimStatus={getStatus(item.id)}
+                  onClaim={handleClaim}
+                />
+              );
+            })}
           </div>
-                </section>
+        </section>
 
         <Leaderboard squads={demoSquads} />
       </main>
