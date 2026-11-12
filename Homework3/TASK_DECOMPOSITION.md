@@ -23,8 +23,8 @@ Stack: React 19, Vite, TypeScript
 |---|---|---|---|
 | T01 | Project setup and documentation | DONE | Not recorded |
 | T02 | Domain contracts and drop FSM | DONE | Not recorded |
-| T03 | Anti-drift countdown hook | TODO | Not recorded |
-| T04 | Accessible airdrop cards | TODO | Not recorded |
+| T03 | Anti-drift countdown hook | Done | Not recorded |
+| T04 | Accessible airdrop cards | DONE | Not recorded |
 | T05 | Mock claim service and optimistic rollback | TODO | Not recorded |
 | T06 | PUBG leaderboard | TODO | Not recorded |
 | T07 | Arena integration and regression testing | TODO | Not recorded |
@@ -78,7 +78,13 @@ Stack: React 19, Vite, TypeScript
 
 **Dependencies:** T01.
 
-**Files:** New TypeScript domain modules under src/; exact paths will be established before implementation.
+**Files:** 
+**Files:**
+- src/features/arena/domain/types.ts (new)
+- src/features/arena/domain/demoData.ts (new)
+- src/features/arena/domain/dropMachine.ts (new)
+- src/features/arena/domain/domainChecks.ts (new)
+- TASK_DECOMPOSITION.md (updated)
 
 **Input:** Homework requirements and deterministic demo scenarios.
 
@@ -88,7 +94,10 @@ Stack: React 19, Vite, TypeScript
 
 **Acceptance criteria:** All four phases have defined transitions; invalid transitions are rejected or handled explicitly; demo data is clearly identified.
 
-**Tests:** TypeScript build and deterministic transition tests when the test infrastructure is available.
+**Tests:** 
+- npm run build — PASS
+- npm run lint — PASS
+- Browser Console domain checks — 20 PASS
 
 **Status:** DONE
 
@@ -114,7 +123,7 @@ Stack: React 19, Vite, TypeScript
 
 **Tests:** Build and countdown edge-case checks.
 
-**Status:** TODO
+**Status:** Done
 
 **Suggested commit:** feat(arena): implement anti-drift airdrop timer
 
@@ -122,23 +131,71 @@ Stack: React 19, Vite, TypeScript
 
 ## T04 — Accessible Airdrop Cards
 
-**Goal:** Display PVS VIP tickets and G-Coin crates with prices, inventory, countdown and phase information.
+
+## T04 — Accessible Airdrop Cards
+
+**Goal:** Build accessible and responsive demo airdrop cards using the existing domain contracts and countdown hook.
 
 **Dependencies:** T02, T03.
 
-**Files:** React components and styles; exact paths determined during T04.
+**Files:**
+- src/features/arena/components/DropCard.tsx (new)
+- src/features/arena/components/DropCard.module.css (new)
+- src/features/arena/Arena.module.css (new)
+- src/App.tsx (modified)
+- src/index.css (modified)
+- TASK_DECOMPOSITION.md (updated)
 
-**Input:** Typed demo drop data and current phase.
+**Inputs:**
+- Typed demo drop items from T02.
+- Countdown hook from T03.
+- Demo scenario selection.
 
-**Output:** Accessible item cards.
+**Outputs:**
+- PUBG-inspired arena landing page.
+- Accessible VIP ticket and G-Coin crate cards.
+- Countdown and phase presentation.
+- Deterministic demo scenario controls.
+- Non-commercial preview action.
 
-**Invariants:** Prices use VND formatting; claim controls reflect phase and inventory; no real ticket availability is implied.
+**Contracts and invariants:**
+- Demo data must be labeled clearly.
+- No real claim, transaction or inventory update occurs.
+- Prices are formatted in VND.
+- Countdown uses absolute target epochs.
+- Displayed phases are derived from clock and stock.
+- Preview controls cannot claim sold-out, expired or unopened items.
+- T02 domain modules and T03 timer modules remain unchanged.
 
-**Acceptance criteria:** Correct information, disabled states, keyboard interaction and accessible labels.
+**Acceptance criteria:**
+- Both demo items render correctly.
+- WARMUP, AIRDROP_LIVE, LOOTED_OUT and EXPIRED are displayed correctly.
+- Buttons reflect availability.
+- Preview action never reports a real claim.
+- 375px viewport remains usable.
+- Keyboard interactions and focus indicators work.
+- Console contains no application errors.
+- Build and lint pass.
 
-**Tests:** Browser, keyboard, Console, build and lint.
+**Tests:**
+- npm run build
+- npm run lint
+- Manual browser functional checks
+- Four demo phase scenarios
+- Claim-preview interaction
+- 375px responsive inspection
+- Keyboard navigation and focus checks
+- Chrome DevTools Console
+- Lighthouse Accessibility inspection
 
-**Status:** TODO
+**Status:** DONE
+
+**Suggested commit:** feat(arena): build accessible airdrop cards
+
+**Actual commit:** Not recorded
+
+
+**Status:** done
 
 **Suggested commit:** feat(arena): add accessible airdrop cards
 
