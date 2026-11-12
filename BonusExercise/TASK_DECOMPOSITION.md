@@ -26,7 +26,7 @@ These are illustrative weights, not scientific relationship measurements.
 
 ## T01 — Repository Setup
 
-Status: IN PROGRESS
+Status: DONE
 
 Goal:
 Establish a working React 19 + Vite + TypeScript application without modifying previous exercises.
@@ -59,29 +59,90 @@ PASS criteria:
 Suggested commit:
 chore(bonus): initialize React TypeScript application
 
-## T02 — Relationship FSM
 
-Status: TODO
+## T02 — Relationship FSM Contract and Transition Tests
+
+Status: DONE
 
 Goal:
-Define exclusive relationship states, events, legal transitions, and pure transition logic.
+Implement a pure and deterministic finite state machine
+for mutually exclusive relationship phases.
 
-Prerequisite: T01 DONE
+Prerequisites:
+- T01 DONE.
+- React 19, Vite, and TypeScript build successfully.
+- Git repository is ready.
 
-Contract:
-FRIENDS | DATING_NO_LOVE | OFFICIAL_LOVE | GHOSTED_EXIT
+Files:
+- src/domain/relationshipMachine.ts (new)
+- src/domain/relationshipMachine.test.ts (new)
+- package.json (modified)
+- package-lock.json (modified)
+- TASK_DECOMPOSITION.md (modified)
 
-Tests:
-- Legal transitions
-- Illegal transitions
-- Single active relationship phase
+Input Contract:
+- RelationshipPhase:
+  FRIENDS | DATING_NO_LOVE | OFFICIAL_LOVE | GHOSTED_EXIT
+- RelationshipEvent:
+  START_DATING | RETURN_TO_FRIENDS |
+  CONFIRM_RELATIONSHIP | GHOST_TIMEOUT |
+  EXIT | RESET
 
-Suggested commit:
-feat(bonus): implement relationship state machine
+Output Contract:
+- transitionRelationship(phase, event): RelationshipPhase
+- canTransition(phase, event): boolean
+- getAvailableEvents(phase): RelationshipEvent[]
+
+State Rules:
+- Exactly one active relationship phase.
+- Only documented transitions are allowed.
+- Invalid transitions preserve the current phase.
+- GHOSTED_EXIT can only transition via RESET.
+- GHOST_TIMEOUT is a domain event.
+- Timer lifecycle is deferred to T05.
+
+Lecture Decision:
+The TypeScript union from slides 31-32 is the
+canonical naming contract. Inconsistent names
+from the prose description are not mixed.
+
+Acceptance Criteria:
+- Four mutually exclusive phases.
+- Six explicitly named events.
+- Legal transitions validated.
+- Illegal transitions rejected.
+- All 24 phase/event combinations covered.
+- Pure deterministic transition function.
+- Vitest tests pass.
+- Production build passes.
+- ESLint passes.
+- Existing application remains functional.
+- No unrelated files modified.
+- Git commit succeeds.
+
+Edge Cases:
+- Direct confirmation from FRIENDS.
+- Timeout outside DATING_NO_LOVE.
+- Invalid transitions from OFFICIAL_LOVE.
+- Terminal phase behavior.
+- Independent returned event arrays.
+- Repeated deterministic transitions.
+
+Verification:
+- npm run test
+- npm run build
+- npm run lint
+- npm run dev
+- Browser Console inspection
+- Git diff inspection
+
+Suggested Commit:
+feat(bonus): implement relationship FSM and transition tests
+
 
 ## T03 — Effort Log and Derived Score
 
-Status: TODO
+Status: DONE
 
 Goal:
 Implement immutable signals with stable IDs and pure effort calculations.
