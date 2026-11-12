@@ -18,7 +18,7 @@ Build a playable and accessible seven-pad drum kit using React 19, TypeScript, V
 - DONE
 
 ## T01 — Project Setup and Planning
-Status: IN PROGRESS
+Status: DONE
 Dependencies: None
 Files: TASK_DECOMPOSITION.md, existing Vite configuration
 Goal: Establish the project structure and implementation plan.
@@ -34,7 +34,7 @@ Tests:
 Commit: chore(drum): initialize project and task plan
 
 ## T02 — Drum Contracts and Key Mapping
-Status: TODO
+Status: DONE
 Dependencies: T01
 Files: src/drum/drum.types.ts, src/drum/drum.config.ts
 Goal: Define seven drum IDs, keyboard codes, pad metadata, and shared types.
@@ -49,7 +49,7 @@ Tests:
 Commit: feat(drum): define pad contracts and key mappings
 
 ## T03 — Audio Engine
-Status: TODO
+Status: DONE
 Dependencies: T02
 Files: src/drum/audio/drumAudio.ts
 Goal: Create real playable sounds using Web Audio API.
