@@ -1,0 +1,134 @@
+.page {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px 20px;
+  background: #f3f6fb;
+  color: #172033;
+}
+
+.header {
+  max-width: 1200px;
+  margin: 0 auto 24px;
+}
+
+.header h1 {
+  margin: 0 0 8px;
+  font-size: clamp(24px, 4vw, 36px);
+}
+
+.header p {
+  margin: 0;
+  color: #48566b;
+}
+
+.panel {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #d8e0eb;
+  border-radius: 16px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.toolbar h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+}
+
+.toolbar p {
+  margin: 0;
+  color: #48566b;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-weight: 600;
+}
+
+.stopButton {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #b42318;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.stopButton:hover {
+  background: #912018;
+}
+
+.stopButton:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+.instructions {
+  margin: 20px 0 12px;
+  color: #48566b;
+  line-height: 1.6;
+}
+
+.scrollArea {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 2px solid #344054;
+  border-radius: 8px;
+  background: #dbe3ee;
+  scrollbar-width: auto;
+  padding-bottom: 8px;
+}
+
+.scrollArea:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+.keyboard {
+  position: relative;
+  height: 190px;
+}
+
+.whiteRow {
+  display: flex;
+  height: 190px;
+}
+
+.error {
+  color: #b42318;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 16px 10px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  .toolbar {
+    align-items: flex-start;
+  }
+
+  .controls {
+    width: 100%;
+  }
+}

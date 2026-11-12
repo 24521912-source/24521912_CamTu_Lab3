@@ -1,5 +1,5 @@
-import SynthTestPanel from "./audio/SynthTestPanel";
+import PianoKeyboard from "./components/PianoKeyboard";
 
 export default function App() {
-  return <SynthTestPanel />;
+  return <PianoKeyboard />;
 }

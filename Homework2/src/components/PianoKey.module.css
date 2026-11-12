@@ -1,0 +1,67 @@
+.key {
+  box-sizing: border-box;
+  position: relative;
+  flex: 0 0 auto;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition: background-color 80ms ease;
+}
+
+.key:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: -4px;
+  z-index: 5;
+}
+
+.white {
+  width: 44px;
+  height: 190px;
+  background: #ffffff;
+  color: #1f2937;
+  border: 1px solid #333c4a;
+  border-radius: 0 0 5px 5px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 13px;
+}
+
+.white.pressed {
+  background: #a7d8ff;
+}
+
+.black {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  width: 28px;
+  height: 115px;
+  background: #172033;
+  color: #ffffff;
+  border: 1px solid #0b1020;
+  border-radius: 0 0 4px 4px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+
+.black.pressed {
+  background: #2563eb;
+}
+
+.noteLabel {
+  pointer-events: none;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .key {
+    transition: none;
+  }
+}
