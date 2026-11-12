@@ -64,7 +64,7 @@ Tests:
 Commit: feat(audio): implement drum sound engine
 
 ## T04 — Semantic Drum Pads
-Status: TODO
+Status: Done
 Dependencies: T02, T03
 Files: src/drum/DrumKit.tsx, src/drum/DrumPad.tsx, src/App.tsx
 Goal: Render seven clickable accessible drum pads.
