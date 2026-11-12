@@ -3,8 +3,10 @@ import { PIANO_NOTES } from "../piano/noteModel";
 import type { RecordedNoteEvent } from "../piano/types";
 import { PianoSynth } from "../audio/PianoSynth";
 import { NoteRecorder } from "../recording/NoteRecorder";
+import ReplayControls from "./ReplayControls";
 import PianoKey from "./PianoKey";
 import styles from "./PianoKeyboard.module.css";
+
 
 const WHITE_WIDTH = 44;
 const BLACK_WIDTH = 28;
@@ -62,6 +64,7 @@ export default function PianoKeyboard() {
   const [error, setError] = useState("");
 
   const [isRecording, setIsRecording] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [recordedNotes, setRecordedNotes] = useState<
     readonly RecordedNoteEvent[]
   >([]);
@@ -272,8 +275,8 @@ export default function PianoKeyboard() {
     refreshPressed();
   }, [refreshPressed]);
 
-  function startRecording(): void {
-    if (isRecording) return;
+function startRecording(): void {
+  if (isRecording || isPlaying) return;
 
     recorderRef.current?.start();
     setRecordedNotes([]);
@@ -392,7 +395,7 @@ export default function PianoKeyboard() {
             <button
               type="button"
               onClick={startRecording}
-              disabled={isRecording}
+              disabled={isRecording || isPlaying}
             >
               Start Recording
             </button>
@@ -448,8 +451,15 @@ export default function PianoKeyboard() {
                 ))}
               </tbody>
             </table>
-          </div>
+                    </div>
         </section>
+
+        <ReplayControls
+          notes={recordedNotes}
+          synthRef={synthRef}
+          disabled={isRecording}
+          onPlayingChange={setIsPlaying}
+        />
       </section>
     </main>
   );
