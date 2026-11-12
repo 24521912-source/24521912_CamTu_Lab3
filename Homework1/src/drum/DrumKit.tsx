@@ -6,6 +6,7 @@ import {
   createDrumAudioEngine,
   type DrumAudioEngine,
 } from './audio/drumAudio'
+import { useDrumKeyboard } from './hooks/useDrumKeyboard'
 import { DrumPad } from './DrumPad'
 import styles from './DrumKit.module.css'
 
@@ -30,6 +31,8 @@ export function DrumKit() {
     void engine.play(id)
   }, [])
 
+  const { pressedCodes } = useDrumKeyboard(handleHit)
+
   return (
     <main className={styles.studio}>
       <header className={styles.header}>
@@ -52,7 +55,10 @@ export function DrumKit() {
         aria-labelledby="drum-heading"
       >
         <div className={styles.sectionHeader}>
-          <h2 id="drum-heading" className={styles.sectionTitle}>
+          <h2
+            id="drum-heading"
+            className={styles.sectionTitle}
+          >
             Drum Pads
           </h2>
 
@@ -62,8 +68,9 @@ export function DrumKit() {
         </div>
 
         <p className={styles.instructions}>
-          Click a pad or use Tab to focus it,
-          then press Enter or Space to play.
+          Press W, A, S, D, J, K or L to play.
+          You can also click a pad or focus it with Tab,
+          then use Enter or Space.
         </p>
 
         <div className={styles.padGrid}>
@@ -71,6 +78,9 @@ export function DrumKit() {
             <DrumPad
               key={pad.id}
               pad={pad}
+              isShortcutPressed={
+                pressedCodes.has(pad.code)
+              }
               onHit={handleHit}
             />
           ))}

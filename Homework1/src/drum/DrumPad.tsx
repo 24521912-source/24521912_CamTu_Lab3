@@ -1,26 +1,37 @@
 
 import { useState } from 'react'
-import type { KeyboardEvent, PointerEvent } from 'react'
+import type {
+  KeyboardEvent,
+  PointerEvent,
+} from 'react'
 import type { DrumPadConfig } from './drum.types'
 import styles from './DrumKit.module.css'
 
 interface DrumPadProps {
   pad: DrumPadConfig
+  isShortcutPressed: boolean
   onHit: (id: DrumPadConfig['id']) => void
 }
 
-export function DrumPad({ pad, onHit }: DrumPadProps) {
-  const [isPressed, setIsPressed] = useState(false)
+export function DrumPad({
+  pad,
+  isShortcutPressed,
+  onHit,
+}: DrumPadProps) {
+  const [isLocalPressed, setIsLocalPressed] = useState(false)
+
+  const isPressed = isLocalPressed || isShortcutPressed
 
   function handlePointerDown(
     event: PointerEvent<HTMLButtonElement>,
   ) {
     if (event.button !== 0) return
-    setIsPressed(true)
+
+    setIsLocalPressed(true)
   }
 
   function handlePointerUp() {
-    setIsPressed(false)
+    setIsLocalPressed(false)
   }
 
   function handleKeyDown(
@@ -35,14 +46,14 @@ export function DrumPad({ pad, onHit }: DrumPadProps) {
       return
     }
 
-    setIsPressed(true)
+    setIsLocalPressed(true)
   }
 
   function handleKeyUp(
     event: KeyboardEvent<HTMLButtonElement>,
   ) {
     if (event.code === 'Enter' || event.code === 'Space') {
-      setIsPressed(false)
+      setIsLocalPressed(false)
     }
   }
 
@@ -59,7 +70,7 @@ export function DrumPad({ pad, onHit }: DrumPadProps) {
       onPointerLeave={handlePointerUp}
       onKeyDown={handleKeyDown}
       onKeyUp={handleKeyUp}
-      onBlur={() => setIsPressed(false)}
+      onBlur={() => setIsLocalPressed(false)}
       onClick={() => onHit(pad.id)}
     >
       <span className={styles.padKey} aria-hidden="true">
@@ -70,7 +81,10 @@ export function DrumPad({ pad, onHit }: DrumPadProps) {
         {pad.name}
       </span>
 
-      <span className={styles.padDescription} aria-hidden="true">
+      <span
+        className={styles.padDescription}
+        aria-hidden="true"
+      >
         {pad.description}
       </span>
     </button>
