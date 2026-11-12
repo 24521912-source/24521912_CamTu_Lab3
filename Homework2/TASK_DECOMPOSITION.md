@@ -21,8 +21,8 @@
 | ID | Task | Dependencies | Status |
 |---|---|---|---|
 | T01 | Repository Inspection & Task Planning | None | DONE |
-| T02 | React 19 + Vite + TypeScript Setup | T01 | TODO |
-| T03 | Mathematical MIDI Note Model & Contracts | T02 | TODO |
+| T02 | React 19 + Vite + TypeScript Setup | T01 | DONE |
+| T03 | Mathematical MIDI Note Model & Contracts | T02 | DONE |
 | T04 | Web Audio Synthesizer & 8-Voice FIFO | T03 | TODO |
 | T05 | 88-Key Piano UI & Interactions | T04 | TODO |
 | T06 | React.memo & Profiler Verification | T05 | TODO |
