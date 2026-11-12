@@ -162,23 +162,96 @@ Tests:
 Suggested commit:
 feat(bonus): implement effort tracking and derived scoring
 
-## T04 — Accessible Analyzer UI
 
-Status: TODO
+## T04 — Accessible SituationshipAnalyzer UI
+
+Status: IN PROGRESS
 
 Goal:
-Build the SituationshipAnalyzer interface with semantic controls and accessible feedback.
+Integrate the existing relationship FSM and effort model
+into an accessible React 19 user interface.
 
-Prerequisite: T03 DONE
+Prerequisites:
+- T01 DONE.
+- T02 DONE.
+- T03 DONE.
+- Existing domain tests pass.
 
-Tests:
-- Form labels
-- Keyboard controls
-- Status announcements
-- Correct phase display
+Files:
+- src/components/SituationshipAnalyzer.tsx (new)
+- src/components/SituationshipAnalyzer.module.css (new)
+- src/App.tsx (modified)
+- src/App.css (modified)
+- src/index.css (modified)
+- TASK_DECOMPOSITION.md (modified)
 
-Suggested commit:
-feat(bonus): build accessible analyzer interface
+Input Contract:
+- RelationshipPhase and RelationshipEvent from T02.
+- EffortActor and EffortSignalInput from T03.
+- User-selected actor and positive integer steps.
+
+Output Contract:
+- One visible relationship phase.
+- Legal phase transition controls.
+- Immutable effort history.
+- Derived scores and red-flag feedback.
+- Accessible status announcements.
+
+Implementation Decisions:
+- Only legal FSM events are shown.
+- GHOST_TIMEOUT is reserved for T05.
+- Demo multipliers are EM=0.1 and AI_DO=50.
+- Red-flag thresholds are inherited from T03.
+- Scores are derived during render.
+- No redundant score state or useEffect.
+- No backend or real message service.
+
+Acceptance Criteria:
+- SituationshipAnalyzer renders successfully.
+- FSM transitions work correctly.
+- Effort signals can be added and removed.
+- Invalid step inputs are rejected.
+- Scores update after log changes.
+- Red-flag feedback updates correctly.
+- Form labels are associated with inputs.
+- Accessible status announcements exist.
+- Keyboard interaction works.
+- Visible focus is provided.
+- Responsive layout works at 375px.
+- Reduced-motion preference is supported.
+- No browser Console errors.
+- Existing T02/T03 tests pass.
+- Production build passes.
+- ESLint passes.
+- Previous exercises remain unchanged.
+- Git commit succeeds.
+
+Edge Cases:
+- Empty effort log.
+- Zero, negative and fractional steps.
+- Large invalid numerical inputs.
+- Repeated add/remove operations.
+- FSM terminal phase and reset.
+- Keyboard-only interaction.
+- Narrow mobile viewport.
+
+Verification:
+- npm run dev
+- Manual FSM interaction checks
+- Manual effort calculation checks
+- Invalid input checks
+- Keyboard and focus checks
+- Chrome DevTools Accessibility inspection
+- Responsive viewport at 375px
+- Reduced-motion emulation
+- npm run test
+- npm run build
+- npm run lint
+- Git diff inspection
+
+Suggested Commit:
+feat(bonus): build accessible situationship analyzer UI
+
 
 ## T05 — Seen Không Rep Timer
 
