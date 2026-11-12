@@ -356,26 +356,104 @@ Verification:
 Suggested Commit:
 feat(bonus): implement ghosting timer and safe cleanup
 
-## T06 — Regression and Accessibility
 
-Status: TODO
+# T06 — Regression, Accessibility & Lifecycle Verification
 
-Goal:
-Verify all interactions, responsiveness, accessibility and lifecycle behavior.
+## Environment
+- OS: Windows
+- Framework: React 19 + TypeScript + Vite
+- Browser and version:
+- Test date:
+- Git commit tested:
+- Lighthouse target: Dev / Production preview
 
-Prerequisite: T05 DONE
+## 1. Automated Checks
 
-Tests:
-- FSM regression
-- Effort calculations
-- Timer cancellation
-- 375px responsive layout
-- Keyboard navigation
-- Reduced motion
-- Available build/lint/test scripts
+| Check | Result | Actual details |
+|---|---|---|
+| npm run test | PENDING | |
+| npm run build | PENDING | |
+| npm run lint | PENDING | |
+| React fake-timer tests | PENDING | |
 
-Suggested commit:
-test(bonus): verify analyzer behavior and accessibility
+## 2. Regression
+
+| Area | Result | Notes |
+|---|---|---|
+| T02 Relationship FSM | PENDING | |
+| T03 Effort log and scoring | PENDING | |
+| T04 UI and form validation | PENDING | |
+| T05 Message lifecycle | PENDING | |
+
+## 3. Timer Lifecycle
+
+| Case | Result | Notes |
+|---|---|---|
+| LC01 — No timer on mount | PENDING | |
+| LC02 — Five-second timeout | PENDING | |
+| LC03 — Reply cancellation | PENDING | |
+| LC04 — Manual cancellation | PENDING | |
+| LC05 — Phase change | PENDING | |
+| LC06 — Manual exit | PENDING | |
+| LC07 — Actor switch | PENDING | |
+| LC08 — Rapid resend | PENDING | |
+| LC09 — Effort change | PENDING | |
+| LC10 — Unmount cleanup | PENDING | |
+| LC11 — StrictMode cleanup | PENDING | |
+
+## 4. Accessibility
+
+- Keyboard navigation:
+- Focus visibility:
+- Form labels and errors:
+- Live region:
+- Color contrast:
+- Reduced motion:
+- Screen-reader check, if performed:
+
+## 5. Responsive
+
+- 375px:
+- 768px:
+- Desktop:
+- Horizontal overflow:
+
+## 6. Lighthouse
+
+- Test URL/environment:
+- Device: Mobile
+- Performance:
+- Accessibility:
+- Best Practices:
+- SEO:
+- Issues identified:
+
+## 7. Evidence
+
+| Evidence | Local file path | What it proves |
+|---|---|---|
+| Automated tests | | |
+| Build / lint | | |
+| FSM and effort | | |
+| Waiting / timeout | | |
+| Accessibility | | |
+| Responsive 375px | | |
+| Lighthouse | | |
+
+## 8. Findings and Fixes
+
+- Finding:
+- Reproduction steps:
+- Root cause:
+- Correction:
+- Retest result:
+
+## 9. Final T06 Decision
+
+- Overall result: PENDING
+- Unresolved issues:
+- Git commit:
+
 
 ## T07 — Documentation and Final Review
 
