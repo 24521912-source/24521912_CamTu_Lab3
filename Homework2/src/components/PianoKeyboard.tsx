@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PIANO_NOTES } from "../piano/noteModel";
+import type { RecordedNoteEvent } from "../piano/types";
 import { PianoSynth } from "../audio/PianoSynth";
+import { NoteRecorder } from "../recording/NoteRecorder";
 import PianoKey from "./PianoKey";
 import styles from "./PianoKeyboard.module.css";
 
@@ -15,7 +17,9 @@ interface NoteSession {
   timer?: ReturnType<typeof setTimeout>;
 }
 
-const WHITE_NOTES = PIANO_NOTES.filter((note) => note.isWhite);
+const WHITE_NOTES = PIANO_NOTES.filter(
+  (note) => note.isWhite
+);
 
 const BLACK_NOTES = (() => {
   let whiteCount = 0;
@@ -35,15 +39,32 @@ const BLACK_NOTES = (() => {
   return positions;
 })();
 
+const BLACK_NOTE_MAP = new Map(
+  PIANO_NOTES.filter((note) => note.isBlack).map(
+    (note) => [note.midi, note]
+  )
+);
+
 export default function PianoKeyboard() {
   const synthRef = useRef<PianoSynth | null>(null);
   const sessionsRef = useRef(new Map<number, NoteSession>());
+
+  const recorderRef = useRef<NoteRecorder | null>(null);
+
+  if (recorderRef.current === null) {
+    recorderRef.current = new NoteRecorder();
+  }
 
   const [pressed, setPressed] = useState<ReadonlySet<number>>(
     () => new Set<number>()
   );
   const [activeCount, setActiveCount] = useState(0);
   const [error, setError] = useState("");
+
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedNotes, setRecordedNotes] = useState<
+    readonly RecordedNoteEvent[]
+  >([]);
 
   const refreshPressed = useCallback(() => {
     setPressed(new Set(sessionsRef.current.keys()));
@@ -82,20 +103,32 @@ export default function PianoKeyboard() {
     const synth = new PianoSynth();
     synthRef.current = synth;
 
+    const recorder = recorderRef.current!;
+
     const unsubscribe = synth.subscribe((voices, event) => {
       setActiveCount(voices.length);
 
-      if (event?.reason === "stolen" || event?.reason === "stopped") {
-        for (const [midi, session] of sessionsRef.current) {
-          if (session.voiceId === event.voice.id) {
-            sessionsRef.current.delete(midi);
+      if (event) {
+        // Record the actual end of the audio voice.
+        // This also covers FIFO voice stealing.
+        recorder.noteOff(event.voice.id, performance.now());
+        setRecordedNotes(recorder.getEvents());
 
-            if (session.timer !== undefined) {
-              clearTimeout(session.timer);
+        if (
+          event.reason === "stolen" ||
+          event.reason === "stopped"
+        ) {
+          for (const [midi, session] of sessionsRef.current) {
+            if (session.voiceId === event.voice.id) {
+              sessionsRef.current.delete(midi);
+
+              if (session.timer !== undefined) {
+                clearTimeout(session.timer);
+              }
+
+              refreshPressed();
+              break;
             }
-
-            refreshPressed();
-            break;
           }
         }
       }
@@ -118,6 +151,8 @@ export default function PianoKeyboard() {
     return () => {
       window.removeEventListener("blur", handleBlur);
       unsubscribe();
+
+      recorder.stop(performance.now());
 
       for (const session of sessionsRef.current.values()) {
         if (session.timer !== undefined) {
@@ -151,14 +186,24 @@ export default function PianoKeyboard() {
       refreshPressed();
       setError("");
 
-      // Audio activation may be asynchronous.
-      // A released note must not start playing afterward.
       void synth.unlock().then(
         () => {
           if (sessionsRef.current.get(midi) !== session) return;
 
           const voiceId = synth.noteOn(midi);
           session.voiceId = voiceId;
+
+          // Record only notes that successfully start playing.
+          const recorder = recorderRef.current;
+
+          if (recorder?.isRecording) {
+            recorder.noteOn(
+              voiceId,
+              midi,
+              PIANO_NOTES[midi - 21].freqHz,
+              performance.now()
+            );
+          }
 
           if (kind === "tap") {
             session.timer = setTimeout(() => {
@@ -215,7 +260,7 @@ export default function PianoKeyboard() {
     [startSession]
   );
 
-  function stopAllNotes() {
+  const stopAllNotes = useCallback(() => {
     for (const session of sessionsRef.current.values()) {
       if (session.timer !== undefined) {
         clearTimeout(session.timer);
@@ -225,13 +270,24 @@ export default function PianoKeyboard() {
     sessionsRef.current.clear();
     synthRef.current?.stopAll();
     refreshPressed();
+  }, [refreshPressed]);
+
+  function startRecording(): void {
+    if (isRecording) return;
+
+    recorderRef.current?.start();
+    setRecordedNotes([]);
+    setIsRecording(true);
   }
 
-  const blackNoteMap = new Map(
-    PIANO_NOTES.filter((note) => note.isBlack).map(
-      (note) => [note.midi, note]
-    )
-  );
+  function stopRecording(): void {
+    if (!isRecording) return;
+
+    const notes = recorderRef.current?.stop(performance.now()) ?? [];
+
+    setRecordedNotes(notes);
+    setIsRecording(false);
+  }
 
   return (
     <main className={styles.page}>
@@ -247,15 +303,14 @@ export default function PianoKeyboard() {
         <div className={styles.toolbar}>
           <div>
             <h2 id="piano-heading">Piano Keyboard</h2>
-            <p>
-              88 keys · 52 white · 36 black · A0–C8
-            </p>
+            <p>88 keys · 52 white · 36 black · A0–C8</p>
           </div>
 
           <div className={styles.controls}>
             <span aria-live="polite">
               Active voices: {activeCount}/8
             </span>
+
             <button
               type="button"
               className={styles.stopButton}
@@ -267,9 +322,9 @@ export default function PianoKeyboard() {
         </div>
 
         <p className={styles.instructions}>
-          Use a mouse or touch to hold notes. Press Tab to
-          focus a key, then Enter or Space to play a short note.
-          Scroll horizontally to reach the full keyboard.
+          Hold a key with a mouse or touch.
+          Use Tab and Enter/Space for keyboard activation.
+          Scroll horizontally to reach all 88 keys.
         </p>
 
         <div
@@ -296,8 +351,7 @@ export default function PianoKeyboard() {
             </div>
 
             {BLACK_NOTES.map(({ midi, left }) => {
-              const note = blackNoteMap.get(midi);
-
+              const note = BLACK_NOTE_MAP.get(midi);
               if (!note) return null;
 
               return (
@@ -320,6 +374,82 @@ export default function PianoKeyboard() {
             Audio error: {error}
           </p>
         )}
+
+        <section
+          aria-labelledby="recording-heading"
+          style={{ marginTop: 28 }}
+        >
+          <h2 id="recording-heading">FIFO Note Recording</h2>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              marginBottom: 16,
+            }}
+          >
+            <button
+              type="button"
+              onClick={startRecording}
+              disabled={isRecording}
+            >
+              Start Recording
+            </button>
+
+            <button
+              type="button"
+              onClick={stopRecording}
+              disabled={!isRecording}
+            >
+              Stop Recording
+            </button>
+          </div>
+
+          <p role="status">
+            {isRecording
+              ? "Recording in progress"
+              : "Recording stopped"}
+            {" · "}
+            {recordedNotes.length} completed note events
+          </p>
+
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                textAlign: "left",
+              }}
+            >
+              <caption>
+                Captured notes in note-on order
+              </caption>
+
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">MIDI</th>
+                  <th scope="col">Frequency (Hz)</th>
+                  <th scope="col">Duration (ms)</th>
+                  <th scope="col">Delta (ms)</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {recordedNotes.map((note, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{note.midi}</td>
+                    <td>{note.freqHz.toFixed(2)}</td>
+                    <td>{note.durationMs.toFixed(0)}</td>
+                    <td>{note.deltaMs.toFixed(0)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </section>
     </main>
   );
